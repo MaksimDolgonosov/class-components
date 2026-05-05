@@ -1,7 +1,9 @@
 import React from 'react';
 import App from '../../src/components/App/App';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import getPokemonListWithDescription from '../../src/services/fetchPokemons';
+import { PokemonDescription } from '../../src/types/types';
 
 vi.mock('../../src/services/fetchPokemons', () => ({
   default: vi.fn().mockResolvedValue({
@@ -14,34 +16,76 @@ vi.mock('../../src/services/fetchPokemons', () => ({
 
 describe('App', () => {
   it('renders', () => {
-    render(<App />);
-    expect(screen.getByText('Pokemon finder')).toBeDefined();
-    expect(screen.getByPlaceholderText<HTMLInputElement>('Search for a pokemon')).toBeDefined();
-    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Search' })).toBeDefined();
-    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Error test' })).toBeDefined();
-    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Previous page' })).toBeDefined();
-    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Next page' })).toBeDefined();
-  });
+    const { getByText, getByRole } = render(<App />);
 
-vi.mock('../../src/services/fetchPokemons', () => ({
-  default: vi.fn(() => new Promise(() => {})), // не резолвится
-}));
+    expect(getByText('Pokemon finder')).toBeDefined();
+    expect(getByRole('button', { name: 'Error test' })).toBeDefined();
+    expect(getByRole('button', { name: 'Previous page' })).toBeDefined();
+    expect(getByRole('button', { name: 'Next page' })).toBeDefined();
+  });
 
   it('shows loading state when loading is true', async () => {
-    render(<App />);
-    expect(screen.getByAltText('spinner')).toBeDefined();
-
+    vi.mock('../../src/services/fetchPokemons', () => ({
+      default: vi.fn(() => new Promise(() => {})), // не резолвится
+    }));
+    const { getByAltText } = render(<App />);
+    expect(getByAltText('spinner')).toBeDefined();
   });
 
+  it('sets pokemon from localStorage to state on mount', async () => {
+    vi.mocked(globalThis.localStorage.getItem).mockReturnValueOnce('pikachu');
+    render(<App />);
+    await waitFor(() => {
+      const input = screen.getByPlaceholderText<HTMLInputElement>(
+        'Search for a pokemon'
+      );
+      expect(input.value).toBe('pikachu');
+    });
+  });
 
-  // it('sets pokemon from localStorage to state on mount', async () => {
-  //   vi.mocked(globalThis.localStorage.getItem).mockReturnValueOnce('pikachu');
+  it('gets pokemon list from API', async () => {
+    vi.mocked(getPokemonListWithDescription).mockResolvedValue({
+      results: [
+        {
+          name: 'pikachu',
+          description: 'Electric mouse',
+          imageUrl: 'pikachu.png',
+        },
+      ],
+      next: null,
+      previous: null,
+      errorMessage: null,
+    });
+    render(<App />);
 
-  //   render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText('pikachu')).toBeDefined();
+      expect(screen.getByText('Electric mouse')).toBeDefined();
+    });
+  });
 
-  //   await waitFor(() => {
-  //     const input = screen.getByPlaceholderText<HTMLInputElement>('Search for a pokemon');
-  //     expect(input.value).toBe('pikachu');
-  //   });
-  // });
+  it('shows error message when API returns error', async () => {
+    vi.mocked(getPokemonListWithDescription).mockRejectedValue(
+      new Error('API error')
+    );
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText(/Server error: API error/)).toBeDefined();
+    });
+  });
+
+  it('does not write to localStorage when search value is unchanged', async () => {
+    vi.mocked(globalThis.localStorage.getItem).mockReturnValue('Pikachu');
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+    render(<App />);
+    await waitFor(() => {
+      expect(
+        screen.getByPlaceholderText<HTMLInputElement>('Search for a pokemon')
+          .value
+      ).toBe('Pikachu');
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+    expect(setItemSpy).not.toHaveBeenCalledWith('pokemon', 'Pikachu');
+    setItemSpy.mockRestore();
+  });
 });
