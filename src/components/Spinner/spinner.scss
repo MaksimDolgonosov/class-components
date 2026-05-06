@@ -1,0 +1,22 @@
+.spinner {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0;
+  min-height: 500px;
+}
+
+.spinner img {
+  width: 56px;
+  height: 56px;
+  animation: spinner-rotate 0.9s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
