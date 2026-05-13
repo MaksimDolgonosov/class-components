@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import TopControls from '../TopControls/TopControls';
 import Results from '../Results/Results';
 import { PokemonState } from '../../types/types';
@@ -17,34 +17,37 @@ const App = () => {
     errorTest: false,
   });
 
-  useEffect(() => {
-    setState({ ...state, pokemon: localStorage.getItem('pokemon') || '' });
-    getPokemonList('');
-  }, []);
-
-  const getPokemonList = (url: string) => {
-    setState({ ...state, loading: true });
+  const getPokemonList = useCallback((url: string) => {
+    setState((prev) => ({ ...prev, loading: true }));
 
     getPokemonListWithDescription(url)
       .then((data) => {
-        setState({
-          ...state,
+        setState((prev) => ({
+          ...prev,
           data: data.results,
           next: data.next,
           previous: data.previous,
           loading: false,
           error: data.errorMessage,
-        });
+        }));
       })
       .catch((error) => {
-        setState({
-          ...state,
+        setState((prev) => ({
+          ...prev,
           data: [],
           loading: false,
           error: `Server error: ${error.message}`,
-        });
+        }));
       });
-  };
+  }, []);
+
+  useEffect(() => {
+    setState((prev) => ({
+      ...prev,
+      pokemon: localStorage.getItem('pokemon') || '',
+    }));
+    getPokemonList('');
+  }, [getPokemonList]);
   const onChangePage = (direction: 'previous' | 'next') => {
     if (state.previous === null && direction === 'previous') {
       return;
@@ -56,15 +59,18 @@ const App = () => {
   };
 
   const handleSearch = (pokemon: string) => {
-    if (pokemon.trim() === state.pokemon) {
-      return;
-    }
-    localStorage.setItem('pokemon', pokemon.trim());
-    setState({ ...state, pokemon: pokemon.trim() });
+    const trimmed = pokemon.trim();
+    setState((prev) => {
+      if (trimmed === prev.pokemon) {
+        return prev;
+      }
+      localStorage.setItem('pokemon', trimmed);
+      return { ...prev, pokemon: trimmed };
+    });
   };
 
   const handleLoading = (loading: boolean) => {
-    setState({ ...state, loading });
+    setState((prev) => ({ ...prev, loading }));
   };
 
   const filteredData = state.data.filter((pokemon) =>
@@ -102,7 +108,7 @@ const App = () => {
           </div>
           <button
             className="error-test-btn"
-            onClick={() => setState({ ...state, errorTest: true })}
+            onClick={() => setState((prev) => ({ ...prev, errorTest: true }))}
           >
             Error test
           </button>
