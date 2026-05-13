@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import TopControls from '../TopControls/TopControls';
 import Results from '../Results/Results';
 import { PokemonState } from '../../types/types';
@@ -6,28 +6,29 @@ import getPokemonListWithDescription from '../../services/fetchPokemons';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 
 import './app.scss';
-class App extends Component {
-  state: PokemonState = {
+const App = () => {
+  const [state, setState] = useState<PokemonState>({
     pokemon: '',
     loading: true,
     error: null,
-    next: '',
-    previous: '',
+    next: null,
+    previous: null,
     data: [],
     errorTest: false,
-  };
+  });
 
-  componentDidMount() {
-    this.setState({ pokemon: localStorage.getItem('pokemon') || '' });
-    this.getPokemonList('');
-  }
+  useEffect(() => {
+    setState({ ...state, pokemon: localStorage.getItem('pokemon') || '' });
+    getPokemonList('');
+  }, []);
 
-  getPokemonList = (url: string) => {
-    this.setState({ loading: true });
+  const getPokemonList = (url: string) => {
+    setState({ ...state, loading: true });
 
     getPokemonListWithDescription(url)
       .then((data) => {
-        this.setState({
+        setState({
+          ...state,
           data: data.results,
           next: data.next,
           previous: data.previous,
@@ -36,86 +37,79 @@ class App extends Component {
         });
       })
       .catch((error) => {
-        this.setState({
+        setState({
+          ...state,
           data: [],
           loading: false,
           error: `Server error: ${error.message}`,
         });
       });
   };
-
-  onChangePage = (direction: 'previous' | 'next') => {
-    if (this.state.previous === null && direction === 'previous') {
+  const onChangePage = (direction: 'previous' | 'next') => {
+    if (state.previous === null && direction === 'previous') {
       return;
     }
 
-    if (direction === 'previous' && this.state.previous) {
-      this.getPokemonList(this.state.previous);
-    } else if (direction === 'next' && this.state.next) {
-      this.getPokemonList(this.state.next);
-    }
+    if (direction === 'previous' && state.previous)
+      getPokemonList(state.previous);
+    else if (direction === 'next' && state.next) getPokemonList(state.next);
   };
 
-  handleSearch = (pokemon: string) => {
-    if (pokemon.trim() === this.state.pokemon) {
+  const handleSearch = (pokemon: string) => {
+    if (pokemon.trim() === state.pokemon) {
       return;
     }
     localStorage.setItem('pokemon', pokemon.trim());
-    this.setState({ pokemon: pokemon.trim() });
+    setState({ ...state, pokemon: pokemon.trim() });
   };
 
-  handleLoading = (loading: boolean) => {
-    this.setState({ loading });
+  const handleLoading = (loading: boolean) => {
+    setState({ ...state, loading });
   };
 
-  render() {
-    const filteredData = this.state.data.filter((pokemon) =>
-      pokemon.name.toLowerCase().includes(this.state.pokemon.toLowerCase())
-    );
-    return (
-      <div className="app">
-        <h1 className="title">Pokemon finder</h1>
-        <div className="container">
-          <TopControls
-            onSearch={this.handleSearch}
-            placeholder={this.state.pokemon}
+  const filteredData = state.data.filter((pokemon) =>
+    pokemon.name.toLowerCase().includes(state.pokemon.toLowerCase())
+  );
+  return (
+    <div className="app">
+      <h1 className="title">Pokemon finder</h1>
+      <div className="container">
+        <TopControls onSearch={handleSearch} placeholder={state.pokemon} />
+        <ErrorBoundary>
+          <Results
+            loading={state.loading}
+            onLoading={handleLoading}
+            data={filteredData}
+            error={state.error}
+            errorTest={state.errorTest}
           />
-          <ErrorBoundary>
-            <Results
-              loading={this.state.loading}
-              onLoading={this.handleLoading}
-              data={filteredData}
-              error={this.state.error}
-              errorTest={this.state.errorTest}
-            />
-          </ErrorBoundary>
+        </ErrorBoundary>
 
-          <div className="container-btns">
-            <div className="container-btns-nav">
-              <button
-                disabled={this.state.previous === null}
-                onClick={() => this.onChangePage('previous')}
-              >
-                Previous page
-              </button>
-              <button
-                disabled={this.state.next === null}
-                onClick={() => this.onChangePage('next')}
-              >
-                Next page
-              </button>
-            </div>
+        <div className="container-btns">
+          <div className="container-btns-nav">
             <button
-              className="error-test-btn"
-              onClick={() => this.setState({ errorTest: true })}
+              disabled={state.previous === null}
+              onClick={() => onChangePage('previous')}
             >
-              Error test
+              Previous page
+            </button>
+            <button
+              disabled={state.next === null}
+              onClick={() => onChangePage('next')}
+            >
+              Next page
             </button>
           </div>
+          <button
+            className="error-test-btn"
+            onClick={() => setState({ ...state, errorTest: true })}
+          >
+            Error test
+          </button>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default App;
