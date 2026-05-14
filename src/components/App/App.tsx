@@ -8,9 +8,9 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 import './app.scss';
 
 const App = () => {
-  const [pokemon, setPokemon] = useLocalStorage('pokemon', '');
+  const { pokemon, setPokemon } = useLocalStorage('pokemon', '');
   const [state, setState] = useState<PokemonState>({
-    pokemon: '',
+    pokemon: pokemon,
     loading: true,
     error: null,
     next: null,
