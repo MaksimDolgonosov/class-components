@@ -1,40 +1,37 @@
-import { Component, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { TopControlsState, TopControlsProps } from '../../types/types';
 import './top-controls.scss';
 
-class TopControls extends Component<TopControlsProps, TopControlsState> {
-  state: TopControlsState = {
-    search: this.props.placeholder || '',
+const TopControls = ({ onSearch, placeholder }: TopControlsProps) => {
+  const [state, setState] = useState<TopControlsState>({
+    search: placeholder || '',
+  });
+
+  useEffect(() => {
+    setState({ search: placeholder || '' });
+  }, [placeholder]);
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setState((prev) => ({ ...prev, search: e.target.value }));
   };
 
-  componentDidUpdate(prevProps: TopControlsProps) {
-    if (prevProps.placeholder !== this.props.placeholder) {
-      this.setState({ search: this.props.placeholder || '' });
-    }
-  }
-
-  handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ search: e.target.value });
+  const handleSearchClick = () => {
+    const trimmed = state.search.trim();
+    setState({ search: trimmed });
+    onSearch(trimmed);
   };
 
-  handleSearchClick = () => {
-    this.setState({ search: this.state.search.trim() });
-    this.props.onSearch(this.state.search.trim());
-  };
-
-  render() {
-    return (
-      <div className="top-controls">
-        <input
-          type="text"
-          placeholder="Search for a pokemon"
-          value={this.state.search}
-          onChange={this.handleSearch}
-        />
-        <button onClick={this.handleSearchClick}>Search</button>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="top-controls">
+      <input
+        type="text"
+        placeholder="Search for a pokemon"
+        value={state.search}
+        onChange={handleSearch}
+      />
+      <button onClick={handleSearchClick}>Search</button>
+    </div>
+  );
+};
 
 export default TopControls;

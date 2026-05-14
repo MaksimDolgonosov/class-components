@@ -9,7 +9,6 @@ const Error = ({ error, comment }: ErrorProps) => {
       <div className="error-picture">
         <img src={ErrorPicture} alt="Error" />
       </div>
-
       {comment ? <div className="error-comment">{comment}</div> : null}
     </div>
   );

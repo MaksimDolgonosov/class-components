@@ -1,35 +1,23 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import './results.scss';
 import Spinner from '../Spinner/Spinner';
-import { ResultsProps, ResultsState } from '../../types/types';
+import { ResultsProps } from '../../types/types';
 import PokemonList from '../PokemonList/PokemonList';
 import ErrorView from '../Error/Error';
 
-class Results extends Component<ResultsProps> {
-  state: ResultsState = {
-    pokemonData: '',
-  };
-
-  componentDidUpdate(prevProps: ResultsProps) {
-    if (this.props.errorTest) {
-      if (prevProps.errorTest !== this.props.errorTest) {
-        throw new Error(`Test error: ${this.props.errorTest}`);
-      }
+const Results = ({ loading, error, errorTest, data }: ResultsProps) => {
+  useEffect(() => {
+    if (errorTest) {
+      throw new Error(`Test error: ${errorTest}`);
     }
-  }
+  }, [errorTest]);
 
-  render() {
-    return (
-      <div className="results">
-        {this.props.error ? <ErrorView error={this.props.error} /> : null}
-        {this.props.loading ? (
-          <Spinner />
-        ) : this.props.error ? null : (
-          <PokemonList data={this.props.data} />
-        )}
-      </div>
-    );
-  }
-}
+  return (
+    <div className="results">
+      {error ? <ErrorView error={error} /> : null}
+      {loading ? <Spinner /> : error ? null : <PokemonList data={data} />}
+    </div>
+  );
+};
 
 export default Results;
