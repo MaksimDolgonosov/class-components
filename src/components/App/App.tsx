@@ -4,9 +4,11 @@ import Results from '../Results/Results';
 import { PokemonState } from '../../types/types';
 import getPokemonListWithDescription from '../../services/fetchPokemons';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
-
+import useLocalStorage from '../../hooks/useLocalStorage';
 import './app.scss';
+
 const App = () => {
+  const [pokemon, setPokemon] = useLocalStorage('pokemon', '');
   const [state, setState] = useState<PokemonState>({
     pokemon: '',
     loading: true,
@@ -16,6 +18,10 @@ const App = () => {
     data: [],
     errorTest: false,
   });
+
+  useEffect(() => {
+    setState((prev) => ({ ...prev, pokemon }));
+  }, [pokemon]);
 
   const getPokemonList = useCallback((url: string) => {
     setState((prev) => ({ ...prev, loading: true }));
@@ -42,12 +48,9 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    setState((prev) => ({
-      ...prev,
-      pokemon: localStorage.getItem('pokemon') || '',
-    }));
     getPokemonList('');
   }, [getPokemonList]);
+
   const onChangePage = (direction: 'previous' | 'next') => {
     if (state.previous === null && direction === 'previous') {
       return;
@@ -58,15 +61,12 @@ const App = () => {
     else if (direction === 'next' && state.next) getPokemonList(state.next);
   };
 
-  const handleSearch = (pokemon: string) => {
-    const trimmed = pokemon.trim();
-    setState((prev) => {
-      if (trimmed === prev.pokemon) {
-        return prev;
-      }
-      localStorage.setItem('pokemon', trimmed);
-      return { ...prev, pokemon: trimmed };
-    });
+  const handleSearch = (searchTerm: string) => {
+    const trimmed = searchTerm.trim();
+    if (trimmed === pokemon) {
+      return;
+    }
+    setPokemon(trimmed);
   };
 
   const handleLoading = (loading: boolean) => {
