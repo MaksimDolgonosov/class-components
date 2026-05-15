@@ -4,10 +4,13 @@ import Results from '../Results/Results';
 import { PokemonState } from '../../types/types';
 import getPokemonListWithDescription from '../../services/fetchPokemons';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
+import Pagination from '../Pagination/Pagination';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import './app.scss';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 const App = () => {
+  const navigate = useNavigate();
   const { pokemon, setPokemon } = useLocalStorage('pokemon', '');
   const [state, setState] = useState<PokemonState>({
     pokemon: pokemon,
@@ -17,7 +20,27 @@ const App = () => {
     previous: null,
     data: [],
     errorTest: false,
+    limit: 10,
+    offset: 0,
+    pokemonId: null,
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    params.set('page', String(state.offset + 1));
+
+    if (state.pokemonId) {
+      params.set('pokemon', state.pokemonId);
+    }
+
+    navigate(
+      {
+        pathname: state.pokemonId ? '/pokemon' : '/',
+        search: `?${params.toString()}`,
+      },
+      { replace: true }
+    );
+  }, [state.offset, state.pokemonId, navigate]);
 
   useEffect(() => {
     setState((prev) => ({ ...prev, pokemon }));
@@ -56,9 +79,13 @@ const App = () => {
       return;
     }
 
-    if (direction === 'previous' && state.previous)
+    if (direction === 'previous' && state.previous) {
+      setState((prev) => ({ ...prev, offset: prev.offset - 1 }));
       getPokemonList(state.previous);
-    else if (direction === 'next' && state.next) getPokemonList(state.next);
+    } else if (direction === 'next' && state.next) {
+      setState((prev) => ({ ...prev, offset: prev.offset + 1 }));
+      getPokemonList(state.next);
+    }
   };
 
   const handleSearch = (searchTerm: string) => {
@@ -67,6 +94,13 @@ const App = () => {
       return;
     }
     setPokemon(trimmed);
+    setState((prev) => ({ ...prev, offset: 0 }));
+    if (pokemon === '') {
+      getPokemonList('');
+    }
+  };
+  const handleErrorTest = () => {
+    setState((prev: PokemonState) => ({ ...prev, errorTest: true }));
   };
 
   const handleLoading = (loading: boolean) => {
@@ -76,43 +110,67 @@ const App = () => {
   const filteredData = state.data.filter((pokemon) =>
     pokemon.name.toLowerCase().includes(state.pokemon.toLowerCase())
   );
+  const handlePokemonClick = (name: string) => {
+    setState((prev) => ({ ...prev, pokemonId: name }));
+  };
+
+  const setPokemonId = (pokemonId: string) => {
+    setState((prev) => ({ ...prev, pokemonId }));
+  };
   return (
     <div className="app">
       <h1 className="title">Pokemon finder</h1>
-      <div className="container">
-        <TopControls onSearch={handleSearch} placeholder={state.pokemon} />
-        <ErrorBoundary>
-          <Results
+      <div className="layout">
+        <div className="container">
+          <TopControls onSearch={handleSearch} placeholder={state.pokemon} />
+          <ErrorBoundary>
+            <Results
+              loading={state.loading}
+              onLoading={handleLoading}
+              data={filteredData}
+              error={state.error}
+              errorTest={state.errorTest}
+              onPokemonClick={handlePokemonClick}
+            />
+          </ErrorBoundary>
+          <Pagination
             loading={state.loading}
-            onLoading={handleLoading}
-            data={filteredData}
-            error={state.error}
-            errorTest={state.errorTest}
+            previous={state.previous}
+            next={state.next}
+            offset={state.offset}
+            onChangePage={onChangePage}
+            handleErrorTest={handleErrorTest}
           />
-        </ErrorBoundary>
 
-        <div className="container-btns">
-          <div className="container-btns-nav">
+          {/* {!state.loading ? (
+          <div className="container-btns">
+            <div className="container-btns-nav">
+              <button
+                disabled={state.previous === null}
+                onClick={() => onChangePage('previous')}
+              >
+                Previous page
+              </button>
+              <span className="page-number">{state.offset + 1}</span>
+              <button
+                disabled={state.next === null}
+                onClick={() => onChangePage('next')}
+              >
+                Next page
+              </button>
+            </div>
             <button
-              disabled={state.previous === null}
-              onClick={() => onChangePage('previous')}
+              className="error-test-btn"
+              onClick={() => setState((prev) => ({ ...prev, errorTest: true }))}
             >
-              Previous page
-            </button>
-            <button
-              disabled={state.next === null}
-              onClick={() => onChangePage('next')}
-            >
-              Next page
+              Error test
             </button>
           </div>
-          <button
-            className="error-test-btn"
-            onClick={() => setState((prev) => ({ ...prev, errorTest: true }))}
-          >
-            Error test
-          </button>
+        ) : null} */}
         </div>
+        <Outlet
+          context={{ pokemonId: state.pokemonId, setPokemonId: setPokemonId }}
+        />
       </div>
     </div>
   );

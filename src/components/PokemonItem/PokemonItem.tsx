@@ -1,9 +1,14 @@
-import { PokemonDescription } from '../../types/types';
+import { PokemonItemProps } from '../../types/types';
 import './pokemon-item.scss';
 
-const PokemonItem = ({ name, description, imageUrl }: PokemonDescription) => {
+const PokemonItem = ({
+  name,
+  description,
+  imageUrl,
+  onPokemonClick,
+}: PokemonItemProps) => {
   return (
-    <div className="pokemon-item">
+    <div className="pokemon-item" onClick={() => onPokemonClick(name)}>
       <div
         className="pokemon-item-image"
         style={{

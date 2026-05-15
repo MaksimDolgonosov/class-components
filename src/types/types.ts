@@ -10,6 +10,9 @@ export interface PokemonState {
   previous: string | null;
   data: PokemonDescription[];
   errorTest: boolean;
+  limit: number;
+  offset: number;
+  pokemonId: string | null;
 }
 
 export interface TopControlsProps {
@@ -23,10 +26,12 @@ export interface ResultsProps {
   onLoading: (loading: boolean) => void;
   data: PokemonDescription[];
   errorTest: boolean;
+  onPokemonClick: (name: string) => void;
 }
 
 export interface PokemonListProps {
   data: PokemonDescription[];
+  onPokemonClick: (name: string) => void;
 }
 
 export interface PokemonListState {
@@ -56,7 +61,52 @@ export interface PokemonDescription {
   imageUrl: string;
 }
 
+export interface PokemonItemProps extends PokemonDescription {
+  onPokemonClick: (name: string) => void;
+}
+
 export interface ErrorProps {
   error: string;
   comment?: string | null;
+}
+
+export interface PaginationProps {
+  loading: boolean;
+  previous: string | null;
+  next: string | null;
+  offset: number;
+  onChangePage: (direction: 'previous' | 'next') => void;
+  handleErrorTest: () => void;
+}
+
+export interface OutletContext {
+  pokemonId: string | null;
+  setPokemonId: (pokemonId: string | null) => void;
+}
+
+export interface PokemonInfoResponse {
+  name: string;
+  sprites: {
+    front_default: string;
+  };
+  species: PokemonResponseResults;
+  height: number;
+  weight: number;
+  base_experience: number;
+}
+
+export interface PokemonInfo {
+  name: string;
+  description: string;
+  imageUrl: string;
+  baseHappiness: number | null;
+  captureRate: number | null;
+  height: number;
+  weight: number;
+  baseExperience: number;
+}
+
+export interface PokemonInfoState extends PokemonInfo {
+  loading: boolean;
+  error: string | null;
 }

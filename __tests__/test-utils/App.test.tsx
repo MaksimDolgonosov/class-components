@@ -1,43 +1,52 @@
 import App from '../../src/components/App/App';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import getPokemonListWithDescription from '../../src/services/fetchPokemons';
+import { renderWithRouter } from './renderWithRouter';
 
+const renderApp = () => renderWithRouter(<App />);
+
+const defaultPokemonListResponse = {
+  results: [],
+  next: null,
+  previous: null,
+  errorMessage: null,
+};
 
 vi.mock('../../src/services/fetchPokemons', () => ({
-  default: vi.fn().mockResolvedValue({
-    results: [],
-    next: null,
-    previous: null,
-    errorMessage: null,
-  }),
+  default: vi.fn(),
 }));
 
 describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(getPokemonListWithDescription).mockResolvedValue(
+      defaultPokemonListResponse
+    );
   });
 
-  it('renders', () => {
-    const { getByText, getByRole } = render(<App />);
+  it('renders', async () => {
+    const { getByText } = renderApp();
 
     expect(getByText('Pokemon finder')).toBeDefined();
-    expect(getByRole('button', { name: 'Error test' })).toBeDefined();
-    expect(getByRole('button', { name: 'Previous page' })).toBeDefined();
-    expect(getByRole('button', { name: 'Next page' })).toBeDefined();
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Error test' })).toBeDefined();
+      expect(screen.getByRole('button', { name: 'Previous page' })).toBeDefined();
+      expect(screen.getByRole('button', { name: 'Next page' })).toBeDefined();
+    });
   });
 
   it('shows loading state when loading is true', async () => {
-    vi.mock('../../src/services/fetchPokemons', () => ({
-      default: vi.fn(() => new Promise(() => { })), // не резолвится
-    }));
-    render(<App />);
+    vi.mocked(getPokemonListWithDescription).mockImplementation(
+      () => new Promise(() => {})
+    );
+    renderApp();
     expect(screen.getByAltText('spinner')).toBeDefined();
   });
 
   it('sets pokemon from localStorage to state on mount', async () => {
     vi.mocked(globalThis.localStorage.getItem).mockReturnValueOnce('pikachu');
-    render(<App />);
+    renderApp();
     await waitFor(() => {
       const input = screen.getByPlaceholderText<HTMLInputElement>(
         'Search for a pokemon'
@@ -59,7 +68,7 @@ describe('App', () => {
       previous: null,
       errorMessage: null,
     });
-    render(<App />);
+    renderApp();
 
     await waitFor(() => {
       expect(screen.getByText('pikachu')).toBeDefined();
@@ -71,28 +80,34 @@ describe('App', () => {
     vi.mocked(getPokemonListWithDescription).mockRejectedValue(
       new Error('API error, status: 404')
     );
-    render(<App />);
+    renderApp();
     await waitFor(() => {
-      expect(screen.getByText(/Server error: API error, status: 404/)).toBeDefined();
+      expect(
+        screen.getByText(/Server error: API error, status: 404/)
+      ).toBeDefined();
     });
   });
 
   it('sets search value to localStorage when search is clicked', async () => {
-    render(<App />);
-    const input = screen.getByPlaceholderText<HTMLInputElement>('Search for a pokemon');
+    renderApp();
+    const input = screen.getByPlaceholderText<HTMLInputElement>(
+      'Search for a pokemon'
+    );
     fireEvent.change(input, { target: { value: 'pikachu2' } });
     fireEvent.click(screen.getByRole('button', { name: 'Search' }));
     await waitFor(() => {
-      expect(globalThis.localStorage.setItem).toHaveBeenCalledWith('pokemon', 'pikachu2');
+      expect(globalThis.localStorage.setItem).toHaveBeenCalledWith(
+        'pokemon',
+        'pikachu2'
+      );
       expect(input.value).toBe('pikachu2');
     });
-  })
-
+  });
 
   it('does not write to localStorage when search value is unchanged', async () => {
     vi.mocked(globalThis.localStorage.getItem).mockReturnValue('Pikachu');
     const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
-    render(<App />);
+    renderApp();
     await waitFor(() => {
       expect(
         screen.getByPlaceholderText<HTMLInputElement>('Search for a pokemon')
@@ -104,21 +119,19 @@ describe('App', () => {
     setItemSpy.mockRestore();
   });
 
-
-
   it('changes page using next link and renders new results', async () => {
     vi.mocked(getPokemonListWithDescription)
       .mockResolvedValueOnce({
-      results: [
-        {
-          name: 'pikachu',
-          description: 'Electric mouse',
-          imageUrl: 'pikachu.png',
-        },
-      ],
-      next: 'https://pokeapi.co/api/v2/pokemon?limit=10&offset=10',
-      previous: null,
-      errorMessage: null,
+        results: [
+          {
+            name: 'pikachu',
+            description: 'Electric mouse',
+            imageUrl: 'pikachu.png',
+          },
+        ],
+        next: 'https://pokeapi.co/api/v2/pokemon?limit=10&offset=10',
+        previous: null,
+        errorMessage: null,
       })
       .mockResolvedValueOnce({
         results: [
@@ -133,22 +146,24 @@ describe('App', () => {
         errorMessage: null,
       });
 
-    render(<App />);
+    renderApp();
 
-    const previousButton = screen.getByRole<HTMLButtonElement>('button', {
-      name: 'Previous page',
-    });
-    const nextButton = screen.getByRole<HTMLButtonElement>('button', {
-      name: 'Next page',
-    });
+    let previousButton: HTMLButtonElement;
+    let nextButton: HTMLButtonElement;
 
     await waitFor(() => {
       expect(screen.getByText('pikachu')).toBeDefined();
+      previousButton = screen.getByRole<HTMLButtonElement>('button', {
+        name: 'Previous page',
+      });
+      nextButton = screen.getByRole<HTMLButtonElement>('button', {
+        name: 'Next page',
+      });
       expect(previousButton).toBeDisabled();
       expect(nextButton).toBeEnabled();
     });
 
-    fireEvent.click(nextButton);
+    fireEvent.click(nextButton!);
 
     await waitFor(() => {
       expect(getPokemonListWithDescription).toHaveBeenNthCalledWith(
@@ -159,13 +174,16 @@ describe('App', () => {
     });
   });
 
-
   it('shows errorBoundary message ', async () => {
-    render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: 'Error test' }));
+    renderApp();
+    const errorTestButton = await screen.findByRole('button', {
+      name: 'Error test',
+    });
+    fireEvent.click(errorTestButton);
     await waitFor(() => {
-      expect(screen.getByText('Something went wrong. Please try again later.')).toBeDefined();
+      expect(
+        screen.getByText('Something went wrong. Please try again later.')
+      ).toBeDefined();
     });
   });
-
 });

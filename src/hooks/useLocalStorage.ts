@@ -15,7 +15,6 @@ const useLocalStorage = (key: string, initialValue: string) => {
   }, []);
 
   const setStoredValue = (action: string) => {
-    console.log('useLocalStorage', action, value);
     if (action === value) {
       return;
     }
