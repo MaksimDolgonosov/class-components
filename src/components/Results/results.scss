@@ -1,0 +1,21 @@
+@import '../../styles.scss';
+
+.results {
+  margin-top: 20px;
+  padding: 20px;
+  width: 100%;
+  min-height: 500px;
+  border: 1px solid $primary-color;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.error {
+  font-size: 25px;
+  font-weight: bold;
+  color: $primary-color;
+  text-align: center;
+  margin-top: 20px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
