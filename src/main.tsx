@@ -14,6 +14,9 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <BrowserRouter
+        basename={
+          import.meta.env.BASE_URL.replace(/\/$/, '') || undefined
+        }
         future={{
           v7_startTransition: true,
           v7_relativeSplatPath: true,
