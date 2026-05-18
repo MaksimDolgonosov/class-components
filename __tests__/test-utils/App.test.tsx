@@ -31,7 +31,9 @@ describe('App', () => {
     expect(getByText('Pokemon finder')).toBeDefined();
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Error test' })).toBeDefined();
-      expect(screen.getByRole('button', { name: 'Previous page' })).toBeDefined();
+      expect(
+        screen.getByRole('button', { name: 'Previous page' })
+      ).toBeDefined();
       expect(screen.getByRole('button', { name: 'Next page' })).toBeDefined();
     });
   });

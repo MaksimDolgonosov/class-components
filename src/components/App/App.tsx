@@ -7,7 +7,7 @@ import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Pagination from '../Pagination/Pagination';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import './app.scss';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 const App = () => {
   const navigate = useNavigate();
@@ -120,6 +120,11 @@ const App = () => {
   return (
     <div className="app">
       <h1 className="title">Pokemon finder</h1>
+      <br />
+      <button className="about-button" onClick={() => navigate('/about')}>
+        About page
+      </button>
+      <br />
       <div className="layout">
         <div className="container">
           <TopControls onSearch={handleSearch} placeholder={state.pokemon} />
@@ -141,32 +146,6 @@ const App = () => {
             onChangePage={onChangePage}
             handleErrorTest={handleErrorTest}
           />
-
-          {/* {!state.loading ? (
-          <div className="container-btns">
-            <div className="container-btns-nav">
-              <button
-                disabled={state.previous === null}
-                onClick={() => onChangePage('previous')}
-              >
-                Previous page
-              </button>
-              <span className="page-number">{state.offset + 1}</span>
-              <button
-                disabled={state.next === null}
-                onClick={() => onChangePage('next')}
-              >
-                Next page
-              </button>
-            </div>
-            <button
-              className="error-test-btn"
-              onClick={() => setState((prev) => ({ ...prev, errorTest: true }))}
-            >
-              Error test
-            </button>
-          </div>
-        ) : null} */}
         </div>
         <Outlet
           context={{ pokemonId: state.pokemonId, setPokemonId: setPokemonId }}
