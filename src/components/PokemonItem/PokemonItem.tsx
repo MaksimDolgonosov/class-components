@@ -1,5 +1,7 @@
 import { PokemonItemProps } from '../../types/types';
 import './pokemon-item.scss';
+import { addPokemon, removePokemon } from '../../store/pokemonSlice';
+import { useDispatch } from 'react-redux';
 
 const PokemonItem = ({
   name,
@@ -7,8 +9,26 @@ const PokemonItem = ({
   imageUrl,
   onPokemonClick,
 }: PokemonItemProps) => {
+  const dispatch = useDispatch();
+
+  const togglePokemon = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    if (e.target.checked) {
+      dispatch(addPokemon({ name, description, imageUrl }));
+    } else {
+      dispatch(removePokemon(name));
+    }
+  };
+
   return (
     <div className="pokemon-item" onClick={() => onPokemonClick(name)}>
+      <input
+        className="pokemon-item-checkbox"
+        type="checkbox"
+        value={name}
+        onChange={togglePokemon}
+        onClick={(e) => e.stopPropagation()}
+      />
       <div
         className="pokemon-item-image"
         style={{

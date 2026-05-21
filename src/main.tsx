@@ -6,6 +6,8 @@ import PokemonInfo from './components/PokemonInfo/PokemonInfo';
 import AboutPage from './pages/AboutPage';
 import Page404 from './pages/Page404';
 import { ThemeProvider } from './providers/ThemeProvider';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import './styles.scss';
 
 const rootElement = document.getElementById('root');
@@ -22,23 +24,25 @@ if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      <ThemeProvider>
-        <BrowserRouter
-          basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true,
-          }}
-        >
-          <Routes>
-            <Route path="/" element={<App />}>
-              <Route path="pokemon" element={<PokemonInfo />} />
-            </Route>
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="*" element={<Page404 />} />
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider>
+          <BrowserRouter
+            basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
+            <Routes>
+              <Route path="/" element={<App />}>
+                <Route path="pokemon" element={<PokemonInfo />} />
+              </Route>
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="*" element={<Page404 />} />
+            </Routes>
+          </BrowserRouter>
+        </ThemeProvider>
+      </Provider>
     </React.StrictMode>
   );
 }
