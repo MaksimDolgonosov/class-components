@@ -5,6 +5,7 @@ import { PokemonState } from '../../types/types';
 import getPokemonListWithDescription from '../../services/fetchPokemons';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Pagination from '../Pagination/Pagination';
+import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import './app.scss';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -121,9 +122,12 @@ const App = () => {
     <div className="app">
       <h1 className="title">Pokemon finder</h1>
       <br />
-      <button className="about-button" onClick={() => navigate('/about')}>
-        About page
-      </button>
+      <div className="app-header-actions">
+        <button className="about-button" onClick={() => navigate('/about')}>
+          About page
+        </button>
+        <ThemeSwitcher />
+      </div>
       <br />
       <div className="layout">
         <div className="container">

@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && cp dist/index.html dist/404.html",
+    "build": "tsc -b && vite build --base /class-components/ && cp dist/index.html dist/404.html",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "vite preview --base /class-components/",
     "format": "prettier --write .",
     "prepare": "husky",
     "predeploy": "npm run build",

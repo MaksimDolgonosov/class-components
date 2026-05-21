@@ -9,6 +9,14 @@ import './styles.scss';
 
 const rootElement = document.getElementById('root');
 
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+if (basePath && window.location.pathname === basePath) {
+  window.location.replace(
+    `${import.meta.env.BASE_URL}${window.location.search}${window.location.hash}`
+  );
+}
+
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
