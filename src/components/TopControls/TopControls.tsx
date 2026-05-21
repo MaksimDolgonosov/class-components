@@ -1,8 +1,13 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import { TopControlsState, TopControlsProps } from '../../types/types';
+
+import { useContext } from 'react';
+import { ThemeContext } from '../../providers/ThemeProvider';
+import { IThemeContext } from '../../types/types';
 import './top-controls.scss';
 
 const TopControls = ({ onSearch, placeholder }: TopControlsProps) => {
+  const { theme } = useContext<IThemeContext>(ThemeContext);
   const [state, setState] = useState<TopControlsState>({
     search: placeholder || '',
   });
@@ -24,12 +29,15 @@ const TopControls = ({ onSearch, placeholder }: TopControlsProps) => {
   return (
     <div className="top-controls">
       <input
+        className={`top-controls__input ${theme}`}
         type="text"
         placeholder="Search for a pokemon"
         value={state.search}
         onChange={handleSearch}
       />
-      <button onClick={handleSearchClick}>Search</button>
+      <button className={`search-button ${theme}`} onClick={handleSearchClick}>
+        Search
+      </button>
     </div>
   );
 };

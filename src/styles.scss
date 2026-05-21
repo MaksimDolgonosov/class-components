@@ -6,3 +6,10 @@
 
 $primary-color: #ff6a00;
 $secondary-color: #ff6a00d1;
+
+.dark,
+.dark button {
+  background-color: #494545;
+  color: $primary-color;
+  border-color: #fff;
+}

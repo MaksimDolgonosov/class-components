@@ -13,18 +13,18 @@
     border: 1px solid $primary-color;
     border-radius: 5px;
   }
-  button {
-    display: block;
-    width: 30%;
-    padding: 10px;
-    border: 1px solid $primary-color;
-    border-radius: 5px;
-    background-color: $primary-color;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    &:hover {
-      background-color: $secondary-color;
-    }
+}
+.search-button {
+  display: block;
+  width: 30%;
+  padding: 10px;
+  border: 1px solid $primary-color;
+  border-radius: 5px;
+  background-color: $primary-color;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    background-color: $secondary-color;
   }
 }

@@ -1,18 +1,20 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import TopControls from '../TopControls/TopControls';
 import Results from '../Results/Results';
-import { PokemonState } from '../../types/types';
+import { IThemeContext, PokemonState } from '../../types/types';
 import getPokemonListWithDescription from '../../services/fetchPokemons';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Pagination from '../Pagination/Pagination';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import './app.scss';
 import { Outlet, useNavigate } from 'react-router-dom';
+import './app.scss';
+import { ThemeContext } from '../../providers/ThemeProvider';
 
 const App = () => {
   const navigate = useNavigate();
   const { pokemon, setPokemon } = useLocalStorage('pokemon', '');
+  const { theme } = useContext<IThemeContext>(ThemeContext);
   const [state, setState] = useState<PokemonState>({
     pokemon: pokemon,
     loading: true,
@@ -119,7 +121,7 @@ const App = () => {
     setState((prev) => ({ ...prev, pokemonId }));
   };
   return (
-    <div className="app">
+    <div className={`app ${theme}`}>
       <h1 className="title">Pokemon finder</h1>
       <br />
       <div className="app-header-actions">
