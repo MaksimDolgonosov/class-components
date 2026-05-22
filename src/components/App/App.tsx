@@ -10,11 +10,17 @@ import useLocalStorage from '../../hooks/useLocalStorage';
 import { Outlet, useNavigate } from 'react-router-dom';
 import './app.scss';
 import { ThemeContext } from '../../providers/ThemeProvider';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { setPokemons } from '../../store/pokemonSlice';
+
+import { convertToCSV } from '../../utils/convertToCSV';
 
 const App = () => {
   const navigate = useNavigate();
   const { pokemon, setPokemon } = useLocalStorage('pokemon', '');
   const { theme } = useContext<IThemeContext>(ThemeContext);
+  const { pokemons } = useAppSelector((state) => state.pokemons);
+  const dispatch = useAppDispatch();
   const [state, setState] = useState<PokemonState>({
     pokemon: pokemon,
     loading: true,
@@ -120,6 +126,16 @@ const App = () => {
   const setPokemonId = (pokemonId: string) => {
     setState((prev) => ({ ...prev, pokemonId }));
   };
+  const handleDownloadCSV = () => {
+    const csv = convertToCSV(pokemons);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pokemons-${pokemons.length}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   return (
     <div className={`app ${theme}`}>
       <h1 className="title">Pokemon finder</h1>
@@ -156,6 +172,21 @@ const App = () => {
         <Outlet
           context={{ pokemonId: state.pokemonId, setPokemonId: setPokemonId }}
         />
+      </div>
+      <div className={`footer ${pokemons.length > 0 ? 'active' : ''}`}>
+        <button
+          className={`footer-button ${theme}`}
+          onClick={() => dispatch(setPokemons([]))}
+        >
+          Clear selected pokemons
+        </button>
+        <p>Pokemon selected: {pokemons.length}</p>
+        <button
+          className={`footer-button ${theme}`}
+          onClick={() => handleDownloadCSV()}
+        >
+          Download on CSV
+        </button>
       </div>
     </div>
   );

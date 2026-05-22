@@ -2,6 +2,7 @@ import { PokemonItemProps } from '../../types/types';
 import './pokemon-item.scss';
 import { addPokemon, removePokemon } from '../../store/pokemonSlice';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../../store/hooks';
 
 const PokemonItem = ({
   name,
@@ -10,7 +11,7 @@ const PokemonItem = ({
   onPokemonClick,
 }: PokemonItemProps) => {
   const dispatch = useDispatch();
-
+  const { pokemons } = useAppSelector((state) => state.pokemons);
   const togglePokemon = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     if (e.target.checked) {
@@ -24,6 +25,7 @@ const PokemonItem = ({
     <div className="pokemon-item" onClick={() => onPokemonClick(name)}>
       <input
         className="pokemon-item-checkbox"
+        checked={pokemons.some((pokemon) => pokemon.name === name)}
         type="checkbox"
         value={name}
         onChange={togglePokemon}
