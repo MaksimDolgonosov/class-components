@@ -1,17 +1,26 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import TopControls from '../TopControls/TopControls';
 import Results from '../Results/Results';
-import { PokemonState } from '../../types/types';
+import { IThemeContext, PokemonState } from '../../types/types';
 import getPokemonListWithDescription from '../../services/fetchPokemons';
 import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Pagination from '../Pagination/Pagination';
+import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import './app.scss';
 import { Outlet, useNavigate } from 'react-router-dom';
+import './app.scss';
+import { ThemeContext } from '../../providers/ThemeProvider';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { setPokemons } from '../../store/pokemonSlice';
+
+import { convertToCSV } from '../../utils/convertToCSV';
 
 const App = () => {
   const navigate = useNavigate();
   const { pokemon, setPokemon } = useLocalStorage('pokemon', '');
+  const { theme } = useContext<IThemeContext>(ThemeContext);
+  const { pokemons } = useAppSelector((state) => state.pokemons);
+  const dispatch = useAppDispatch();
   const [state, setState] = useState<PokemonState>({
     pokemon: pokemon,
     loading: true,
@@ -117,13 +126,26 @@ const App = () => {
   const setPokemonId = (pokemonId: string) => {
     setState((prev) => ({ ...prev, pokemonId }));
   };
+  const handleDownloadCSV = () => {
+    const csv = convertToCSV(pokemons);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `pokemons-${pokemons.length}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   return (
-    <div className="app">
+    <div className={`app ${theme}`}>
       <h1 className="title">Pokemon finder</h1>
       <br />
-      <button className="about-button" onClick={() => navigate('/about')}>
-        About page
-      </button>
+      <div className="app-header-actions">
+        <button className="about-button" onClick={() => navigate('/about')}>
+          About page
+        </button>
+        <ThemeSwitcher />
+      </div>
       <br />
       <div className="layout">
         <div className="container">
@@ -150,6 +172,21 @@ const App = () => {
         <Outlet
           context={{ pokemonId: state.pokemonId, setPokemonId: setPokemonId }}
         />
+      </div>
+      <div className={`footer ${pokemons.length > 0 ? 'active' : ''}`}>
+        <button
+          className={`footer-button ${theme}`}
+          onClick={() => dispatch(setPokemons([]))}
+        >
+          Clear selected pokemons
+        </button>
+        <p>Pokemon selected: {pokemons.length}</p>
+        <button
+          className={`footer-button ${theme}`}
+          onClick={() => handleDownloadCSV()}
+        >
+          Download on CSV
+        </button>
       </div>
     </div>
   );

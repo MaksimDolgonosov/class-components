@@ -110,3 +110,10 @@ export interface PokemonInfoState extends PokemonInfo {
   loading: boolean;
   error: string | null;
 }
+
+export type IThemeContext = {
+  theme: TTheme;
+  toggleTheme: () => void;
+};
+
+export type TTheme = 'light' | 'dark';
