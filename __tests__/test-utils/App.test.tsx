@@ -1,28 +1,36 @@
 import App from '../../src/components/App/App';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import getPokemonListWithDescription from '../../src/services/fetchPokemons';
+import { useGetPokemonsListQuery } from '../../src/api/apiSlice';
 import { renderWithRouter } from './renderWithRouter';
 
 const renderApp = () => renderWithRouter(<App />);
 
-const defaultPokemonListResponse = {
-  results: [],
-  next: null,
-  previous: null,
-  errorMessage: null,
+const defaultQueryResult = {
+  data: {
+    results: [],
+    next: null,
+    previous: null,
+  },
+  isLoading: false,
+  isError: false,
+  error: undefined,
+  refetch: vi.fn(),
 };
 
-vi.mock('../../src/services/fetchPokemons', () => ({
-  default: vi.fn(),
-}));
+vi.mock('../../src/api/apiSlice', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('../../src/api/apiSlice')>();
+  return {
+    ...actual,
+    useGetPokemonsListQuery: vi.fn(),
+  };
+});
 
 describe('App', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(getPokemonListWithDescription).mockResolvedValue(
-      defaultPokemonListResponse
-    );
+    vi.mocked(useGetPokemonsListQuery).mockReturnValue(defaultQueryResult);
   });
 
   it('renders', async () => {
@@ -39,9 +47,11 @@ describe('App', () => {
   });
 
   it('shows loading state when loading is true', async () => {
-    vi.mocked(getPokemonListWithDescription).mockImplementation(
-      () => new Promise(() => {})
-    );
+    vi.mocked(useGetPokemonsListQuery).mockReturnValue({
+      ...defaultQueryResult,
+      data: undefined,
+      isLoading: true,
+    });
     renderApp();
     expect(screen.getByAltText('spinner')).toBeDefined();
   });
@@ -58,17 +68,19 @@ describe('App', () => {
   });
 
   it('gets pokemon list from API', async () => {
-    vi.mocked(getPokemonListWithDescription).mockResolvedValue({
-      results: [
-        {
-          name: 'pikachu',
-          description: 'Electric mouse',
-          imageUrl: 'pikachu.png',
-        },
-      ],
-      next: null,
-      previous: null,
-      errorMessage: null,
+    vi.mocked(useGetPokemonsListQuery).mockReturnValue({
+      ...defaultQueryResult,
+      data: {
+        results: [
+          {
+            name: 'pikachu',
+            description: 'Electric mouse',
+            imageUrl: 'pikachu.png',
+          },
+        ],
+        next: null,
+        previous: null,
+      },
     });
     renderApp();
 
@@ -79,9 +91,12 @@ describe('App', () => {
   });
 
   it('shows error message when API returns error', async () => {
-    vi.mocked(getPokemonListWithDescription).mockRejectedValue(
-      new Error('API error, status: 404')
-    );
+    vi.mocked(useGetPokemonsListQuery).mockReturnValue({
+      ...defaultQueryResult,
+      data: undefined,
+      isError: true,
+      error: { status: 404, data: 'Not found' },
+    });
     renderApp();
     await waitFor(() => {
       expect(
@@ -122,31 +137,41 @@ describe('App', () => {
   });
 
   it('changes page using next link and renders new results', async () => {
-    vi.mocked(getPokemonListWithDescription)
-      .mockResolvedValueOnce({
-        results: [
-          {
-            name: 'pikachu',
-            description: 'Electric mouse',
-            imageUrl: 'pikachu.png',
+    vi.mocked(useGetPokemonsListQuery).mockImplementation((arg) => {
+      const offset = arg?.offset ?? 0;
+
+      if (offset === 0) {
+        return {
+          ...defaultQueryResult,
+          data: {
+            results: [
+              {
+                name: 'pikachu',
+                description: 'Electric mouse',
+                imageUrl: 'pikachu.png',
+              },
+            ],
+            next: 'https://pokeapi.co/api/v2/pokemon?limit=10&offset=10',
+            previous: null,
           },
-        ],
-        next: 'https://pokeapi.co/api/v2/pokemon?limit=10&offset=10',
-        previous: null,
-        errorMessage: null,
-      })
-      .mockResolvedValueOnce({
-        results: [
-          {
-            name: 'bulbasaur',
-            description: 'Seed pokemon',
-            imageUrl: 'bulbasaur.png',
-          },
-        ],
-        next: null,
-        previous: 'https://pokeapi.co/api/v2/pokemon?limit=10&offset=0',
-        errorMessage: null,
-      });
+        };
+      }
+
+      return {
+        ...defaultQueryResult,
+        data: {
+          results: [
+            {
+              name: 'bulbasaur',
+              description: 'Seed pokemon',
+              imageUrl: 'bulbasaur.png',
+            },
+          ],
+          next: null,
+          previous: 'https://pokeapi.co/api/v2/pokemon?limit=10&offset=0',
+        },
+      };
+    });
 
     renderApp();
 
@@ -168,10 +193,10 @@ describe('App', () => {
     fireEvent.click(nextButton!);
 
     await waitFor(() => {
-      expect(getPokemonListWithDescription).toHaveBeenNthCalledWith(
-        2,
-        'https://pokeapi.co/api/v2/pokemon?limit=10&offset=10'
-      );
+      expect(useGetPokemonsListQuery).toHaveBeenCalledWith({
+        limit: 10,
+        offset: 10,
+      });
       expect(screen.getByText('bulbasaur')).toBeDefined();
     });
   });

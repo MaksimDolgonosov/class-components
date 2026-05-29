@@ -4,11 +4,11 @@ export interface TopControlsState {
 
 export interface PokemonState {
   pokemon: string;
-  loading: boolean;
-  error: string | null;
-  next: string | null;
-  previous: string | null;
-  data: PokemonDescription[];
+  // loading: boolean;
+  // error: string | null;
+  // next: string | null;
+  // previous: string | null;
+  // data: PokemonDescription[];
   errorTest: boolean;
   limit: number;
   offset: number;
@@ -23,7 +23,7 @@ export interface TopControlsProps {
 export interface ResultsProps {
   loading: boolean;
   error: string | null;
-  onLoading: (loading: boolean) => void;
+  // onLoading: (loading: boolean) => void;
   data: PokemonDescription[];
   errorTest: boolean;
   onPokemonClick: (name: string) => void;
@@ -59,6 +59,13 @@ export interface PokemonDescription {
   name: string;
   description: string;
   imageUrl: string;
+}
+
+export interface PokemonListWithDetails {
+  count?: number;
+  next: string | null;
+  previous: string | null;
+  results: PokemonDescription[];
 }
 
 export interface PokemonItemProps extends PokemonDescription {
@@ -116,4 +123,9 @@ export type IThemeContext = {
   toggleTheme: () => void;
 };
 
+export type GetPokemonsQueryArg = {
+  limit?: number;
+  offset?: number;
+  link?: string | null;
+};
 export type TTheme = 'light' | 'dark';

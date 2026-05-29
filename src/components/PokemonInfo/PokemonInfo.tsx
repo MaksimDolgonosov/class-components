@@ -5,9 +5,11 @@ import { useOutletContext } from 'react-router-dom';
 import Spinner from '../Spinner/Spinner';
 import getPokemonInfo from '../../services/fetchPokemonInfo';
 import { PokemonInfoState } from '../../types/types';
+import { useGetPokemonByNameQuery } from '../../api/apiSlice';
 
 const PokemonInfo = () => {
   const { pokemonId, setPokemonId } = useOutletContext<OutletContext>();
+  const { data, isLoading, error } = useGetPokemonByNameQuery(pokemonId || '');
   const [state, setState] = useState<PokemonInfoState>({
     name: '',
     description: '',
@@ -20,7 +22,7 @@ const PokemonInfo = () => {
     baseHappiness: 0,
     captureRate: 0,
   });
-
+  console.log(data);
   useEffect(() => {
     setState((prev) => ({ ...prev, loading: true }));
     getPokemonInfo(pokemonId)
