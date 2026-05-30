@@ -13,7 +13,9 @@ describe('getPokemonListWithDescription', () => {
         data: {
           next: null,
           previous: null,
-          results: [{ name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/25/' }],
+          results: [
+            { name: 'pikachu', url: 'https://pokeapi.co/api/v2/pokemon/25/' },
+          ],
         },
       },
       {
@@ -24,12 +26,17 @@ describe('getPokemonListWithDescription', () => {
       },
       {
         data: {
-          flavor_text_entries: [{ flavor_text: 'ignored' }, { flavor_text: 'Electric  mouse' }],
+          flavor_text_entries: [
+            { flavor_text: 'ignored' },
+            { flavor_text: 'Electric  mouse' },
+          ],
         },
       },
     ]);
 
-    const result = await getPokemonListWithDescription('https://custom-url.test');
+    const result = await getPokemonListWithDescription(
+      'https://custom-url.test'
+    );
 
     expect(result.errorMessage).toBeNull();
     expect(result.results).toEqual([

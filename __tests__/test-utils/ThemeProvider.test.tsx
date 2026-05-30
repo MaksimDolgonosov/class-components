@@ -2,10 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useContext } from 'react';
 import { describe, expect, it } from 'vitest';
-import {
-  ThemeContext,
-  ThemeProvider,
-} from '../../src/providers/ThemeProvider';
+import { ThemeContext, ThemeProvider } from '../../src/providers/ThemeProvider';
 
 const ThemeConsumer = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);

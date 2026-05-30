@@ -18,5 +18,3 @@ beforeEach(() => {
 afterEach(() => {
   cleanup();
 });
-
-

@@ -56,7 +56,7 @@ export async function fetchPokemonInfoWithBQ(
   }
 
   return transformPokemonInfo(pokeJson, speciesRes.data as SpeciesResponse);
-};
+}
 export type FetchWithBQ = (
   arg: string | FetchArgs
 ) => Promise<{ data?: unknown; error?: FetchBaseQueryError }>;

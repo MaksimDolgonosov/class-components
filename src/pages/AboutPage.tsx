@@ -12,9 +12,9 @@ const AboutPage = () => {
       <h1>About Page</h1>
       <div className="about-page-content">
         <p>
-          Hello! My name is Maksim Dolgonosov. I'm a student of the RS School
-          React course. Here you can find information about the pokemon finder
-          app.
+          Hello! My name is Maksim Dolgonosov. I&apos;m a student of the RS
+          School React course. Here you can find information about the pokemon
+          finder app.
         </p>
 
         <p>

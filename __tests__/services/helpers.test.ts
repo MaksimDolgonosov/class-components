@@ -114,9 +114,9 @@ describe('fetchPokemonInfoWithBQ', () => {
     const fetchError = { status: 404, data: 'Not found' };
     const fetchWithBQ = createFetchWithBQMock([{ error: fetchError }]);
 
-    await expect(fetchPokemonInfoWithBQ('unknown', fetchWithBQ)).rejects.toEqual(
-      fetchError
-    );
+    await expect(
+      fetchPokemonInfoWithBQ('unknown', fetchWithBQ)
+    ).rejects.toEqual(fetchError);
   });
 
   it('throws when species request fails', async () => {
@@ -126,9 +126,9 @@ describe('fetchPokemonInfoWithBQ', () => {
       { error: fetchError },
     ]);
 
-    await expect(fetchPokemonInfoWithBQ('pikachu', fetchWithBQ)).rejects.toEqual(
-      fetchError
-    );
+    await expect(
+      fetchPokemonInfoWithBQ('pikachu', fetchWithBQ)
+    ).rejects.toEqual(fetchError);
   });
 });
 

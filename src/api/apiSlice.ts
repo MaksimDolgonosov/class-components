@@ -6,7 +6,11 @@ import {
   PokemonListWithDetails,
   GetPokemonsQueryArg,
 } from '../types/types';
-import { enrichPokemonResults, fetchPokemonInfoWithBQ, FetchWithBQ } from './helpers';
+import {
+  enrichPokemonResults,
+  fetchPokemonInfoWithBQ,
+  FetchWithBQ,
+} from './helpers';
 
 export const POKEAPI_BASE = 'https://pokeapi.co/api/v2/';
 

@@ -110,9 +110,7 @@ describe('PokemonInfo', () => {
 
     renderPokemonInfo();
 
-    expect(
-      screen.getByText('Request failed with status: 404')
-    ).toBeDefined();
+    expect(screen.getByText('Request failed with status: 404')).toBeDefined();
     expect(screen.queryByText('PIKACHU')).toBeNull();
   });
 

@@ -6,8 +6,10 @@ import { useGetPokemonByNameQuery } from '../../api/apiSlice';
 
 const PokemonInfo = () => {
   const { pokemonId, setPokemonId } = useOutletContext<OutletContext>();
-  const { data, isLoading, isError, error, isFetching } =
-    useGetPokemonByNameQuery(pokemonId || '', { skip: !pokemonId });
+  const { data, isError, error, isFetching } = useGetPokemonByNameQuery(
+    pokemonId || '',
+    { skip: !pokemonId }
+  );
 
   const errorMessage =
     isError && error

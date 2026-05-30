@@ -177,22 +177,15 @@ describe('App', () => {
 
     renderApp();
 
-    let previousButton: HTMLButtonElement;
-    let nextButton: HTMLButtonElement;
-
     await waitFor(() => {
       expect(screen.getByText('pikachu')).toBeDefined();
-      previousButton = screen.getByRole<HTMLButtonElement>('button', {
-        name: 'Previous page',
-      });
-      nextButton = screen.getByRole<HTMLButtonElement>('button', {
-        name: 'Next page',
-      });
-      expect(previousButton).toBeDisabled();
-      expect(nextButton).toBeEnabled();
+      expect(
+        screen.getByRole('button', { name: 'Previous page' })
+      ).toBeDisabled();
+      expect(screen.getByRole('button', { name: 'Next page' })).toBeEnabled();
     });
 
-    fireEvent.click(nextButton!);
+    fireEvent.click(screen.getByRole('button', { name: 'Next page' }));
 
     await waitFor(() => {
       expect(useGetPokemonsListQuery).toHaveBeenCalledWith({
