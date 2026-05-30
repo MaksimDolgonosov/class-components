@@ -14,6 +14,7 @@ const Results = ({
   errorTest,
   data,
   onPokemonClick,
+  onRetry,
 }: ResultsProps) => {
   const { theme } = useContext<IThemeContext>(ThemeContext);
   useEffect(() => {
@@ -24,7 +25,7 @@ const Results = ({
 
   return (
     <div className={`results ${theme}`}>
-      {error ? <ErrorView error={error} /> : null}
+      {error ? <ErrorView error={error} onRetry={onRetry} /> : null}
       {loading ? (
         <Spinner />
       ) : error ? null : (

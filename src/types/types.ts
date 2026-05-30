@@ -22,11 +22,12 @@ export interface TopControlsProps {
 
 export interface ResultsProps {
   loading: boolean;
-  error: string | null;
+  error: string | null | undefined;
   // onLoading: (loading: boolean) => void;
   data: PokemonDescription[];
   errorTest: boolean;
   onPokemonClick: (name: string) => void;
+  onRetry?: () => void;
 }
 
 export interface PokemonListProps {
@@ -75,6 +76,7 @@ export interface PokemonItemProps extends PokemonDescription {
 export interface ErrorProps {
   error: string;
   comment?: string | null;
+  onRetry?: () => void;
 }
 
 export interface PaginationProps {
@@ -127,5 +129,6 @@ export type GetPokemonsQueryArg = {
   limit?: number;
   offset?: number;
   link?: string | null;
+  forceError?: boolean;
 };
 export type TTheme = 'light' | 'dark';

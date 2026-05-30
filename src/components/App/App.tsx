@@ -25,19 +25,11 @@ const formatQueryError = (
 
   if ('status' in error) {
     if (typeof error.status === 'number') {
-      return `Server error: API error, status: ${error.status}`;
+      return `Server error: ${error.data}, status: ${error.status}`;
     }
 
-    if ('error' in error && typeof error.error === 'string') {
-      return `Server error: ${error.error}`;
-    }
+    return 'Server error';
   }
-
-  if ('message' in error && error.message) {
-    return `Server error: ${error.message}`;
-  }
-
-  return 'Server error';
 };
 
 const App = () => {
@@ -62,9 +54,12 @@ const App = () => {
     pokemonId: null,
   });
 
-  const { data, isLoading, error } = useGetPokemonsListQuery({
+  const [forceRtkError, setForceRtkError] = useState(false);
+
+  const { data, isFetching, error, refetch } = useGetPokemonsListQuery({
     limit: state.limit,
     offset: state.offset,
+    forceError: forceRtkError,
   });
 
   const pokemons = data?.results ?? [];
@@ -130,6 +125,11 @@ const App = () => {
     setState((prev) => ({ ...prev, pokemonId }));
   };
 
+  const handleRetryFetch = () => {
+    setForceRtkError(false);
+    refetch();
+  };
+
   const handleDownloadCSV = () => {
     const csv = convertToCSV(selectedPokemons);
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -146,6 +146,15 @@ const App = () => {
       <h1 className="title">Pokemon finder</h1>
       <br />
       <div className="app-header-actions">
+        <button
+          className="about-error-test"
+          onClick={() => setForceRtkError(true)}
+        >
+          Error RTK fetch
+        </button>
+        <button className="about-refetch" onClick={handleRetryFetch}>
+          Manual refetch
+        </button>
         <button className="about-button" onClick={() => navigate('/about')}>
           About page
         </button>
@@ -157,15 +166,16 @@ const App = () => {
           <TopControls onSearch={handleSearch} placeholder={state.pokemon} />
           <ErrorBoundary>
             <Results
-              loading={isLoading}
+              loading={isFetching}
               data={filteredData}
               error={errorMessage}
               errorTest={state.errorTest}
               onPokemonClick={handlePokemonClick}
+              onRetry={handleRetryFetch}
             />
           </ErrorBoundary>
           <Pagination
-            loading={isLoading}
+            loading={isFetching}
             previous={previous}
             next={next}
             offset={Math.floor(state.offset / 10)}

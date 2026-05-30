@@ -1,75 +1,59 @@
 import './pokemon-info.scss';
-import { useState, useEffect } from 'react';
-import { OutletContext } from '../../types/types';
 import { useOutletContext } from 'react-router-dom';
 import Spinner from '../Spinner/Spinner';
-import getPokemonInfo from '../../services/fetchPokemonInfo';
-import { PokemonInfoState } from '../../types/types';
+import { OutletContext } from '../../types/types';
 import { useGetPokemonByNameQuery } from '../../api/apiSlice';
 
 const PokemonInfo = () => {
   const { pokemonId, setPokemonId } = useOutletContext<OutletContext>();
-  const { data, isLoading, error } = useGetPokemonByNameQuery(pokemonId || '');
-  const [state, setState] = useState<PokemonInfoState>({
-    name: '',
-    description: '',
-    imageUrl: '',
-    loading: false,
-    error: null,
-    height: 0,
-    weight: 0,
-    baseExperience: 0,
-    baseHappiness: 0,
-    captureRate: 0,
-  });
-  console.log(data);
-  useEffect(() => {
-    setState((prev) => ({ ...prev, loading: true }));
-    getPokemonInfo(pokemonId)
-      .then((data) => {
-        setState((prev) => ({ ...prev, ...data, loading: false, error: null }));
-      })
-      .catch((error) => {
-        setState((prev) => ({ ...prev, error: error.message, loading: false }));
-      });
-  }, []);
+  const { data, isLoading, isError, error, isFetching } =
+    useGetPokemonByNameQuery(pokemonId || '', { skip: !pokemonId });
+
+  const errorMessage =
+    isError && error
+      ? 'status' in error
+        ? `Request failed with status: ${error.status}`
+        : 'Failed to load pokemon'
+      : null;
 
   return (
     <div className="pokemon-info">
-      {state.loading ? (
+      {isFetching ? (
         <Spinner />
-      ) : (
+      ) : errorMessage ? (
+        <p className="pokemon-info-error">{errorMessage}</p>
+      ) : data ? (
         <>
           <div className="pokemon-info-header">
-            <h2>{pokemonId?.toUpperCase()}</h2>
+            <h2>{data.name.toUpperCase()}</h2>
           </div>
           <div className="pokemon-info-content">
             <div className="pokemon-info-content-image">
-              <img src={state.imageUrl} alt="Pokemon" />
+              <img src={data.imageUrl} alt={data.name} />
             </div>
             <div className="pokemon-info-content-info">
               <p className="pokemon-info-content-info-description">
-                {state.description}
+                {data.description}
               </p>
               <p className="pokemon-info-content-info-base-happiness">
-                <span>Base Happiness:</span> {state.baseHappiness}
+                <span>Base Happiness:</span> {data.baseHappiness}
               </p>
               <p className="pokemon-info-content-info-capture-rate">
-                <span>Capture Rate:</span> {state.captureRate}
+                <span>Capture Rate:</span> {data.captureRate}
               </p>
               <p className="pokemon-info-content-info-height">
-                <span>Height:</span> {state.height}
+                <span>Height:</span> {data.height}
               </p>
               <p className="pokemon-info-content-info-weight">
-                <span>Weight:</span> {state.weight}
+                <span>Weight:</span> {data.weight}
               </p>
               <p className="pokemon-info-content-info-base-experience">
-                <span>Base Experience:</span> {state.baseExperience}
+                <span>Base Experience:</span> {data.baseExperience}
               </p>
             </div>
           </div>
         </>
-      )}
+      ) : null}
       <button className="close-button" onClick={() => setPokemonId(null)}>
         Close
       </button>

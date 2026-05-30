@@ -13,6 +13,7 @@ const defaultQueryResult = {
     previous: null,
   },
   isLoading: false,
+  isFetching: false,
   isError: false,
   error: undefined,
   refetch: vi.fn(),
@@ -50,7 +51,7 @@ describe('App', () => {
     vi.mocked(useGetPokemonsListQuery).mockReturnValue({
       ...defaultQueryResult,
       data: undefined,
-      isLoading: true,
+      isFetching: true,
     });
     renderApp();
     expect(screen.getByAltText('spinner')).toBeDefined();
@@ -100,7 +101,7 @@ describe('App', () => {
     renderApp();
     await waitFor(() => {
       expect(
-        screen.getByText(/Server error: API error, status: 404/)
+        screen.getByText(/Server error: Not found, status: 404/)
       ).toBeDefined();
     });
   });
@@ -138,7 +139,8 @@ describe('App', () => {
 
   it('changes page using next link and renders new results', async () => {
     vi.mocked(useGetPokemonsListQuery).mockImplementation((arg) => {
-      const offset = arg?.offset ?? 0;
+      const offset =
+        typeof arg === 'object' && arg !== null ? (arg.offset ?? 0) : 0;
 
       if (offset === 0) {
         return {
@@ -196,6 +198,7 @@ describe('App', () => {
       expect(useGetPokemonsListQuery).toHaveBeenCalledWith({
         limit: 10,
         offset: 10,
+        forceError: false,
       });
       expect(screen.getByText('bulbasaur')).toBeDefined();
     });

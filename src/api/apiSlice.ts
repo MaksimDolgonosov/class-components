@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import {
-  PokemonInfoResponse,
+  PokemonInfo,
   PokemonResponse,
   PokemonListWithDetails,
   GetPokemonsQueryArg,
 } from '../types/types';
-import { enrichPokemonResults, FetchWithBQ } from './helpers';
+import { enrichPokemonResults, fetchPokemonInfoWithBQ, FetchWithBQ } from './helpers';
 
 export const POKEAPI_BASE = 'https://pokeapi.co/api/v2/';
 
@@ -17,6 +17,15 @@ export const apiSlice = createApi({
     getPokemonsList: builder.query<PokemonListWithDetails, GetPokemonsQueryArg>(
       {
         async queryFn(arg, _api, _extraOptions, fetchWithBQ) {
+          if (arg?.forceError) {
+            return {
+              error: {
+                status: 500,
+                data: 'Forced RTK error for testing',
+              },
+            };
+          }
+
           const { limit = 10, offset = 0 } = arg ?? {};
           const listRes = await fetchWithBQ(
             `pokemon?limit=${limit}&offset=${offset}`
@@ -48,8 +57,27 @@ export const apiSlice = createApi({
         keepUnusedDataFor: parseInt(import.meta.env.VITE_CACHE_TTL) || 60,
       }
     ),
-    getPokemonByName: builder.query<PokemonInfoResponse, string>({
-      query: (name) => `pokemon/${name}`,
+    getPokemonByName: builder.query<PokemonInfo, string>({
+      async queryFn(name, _api, _extraOptions, fetchWithBQ) {
+        if (!name) {
+          return {
+            error: {
+              status: 400,
+              data: 'Pokemon id is required',
+            },
+          };
+        }
+
+        try {
+          const data = await fetchPokemonInfoWithBQ(
+            name,
+            fetchWithBQ as FetchWithBQ
+          );
+          return { data };
+        } catch (error) {
+          return { error: error as FetchBaseQueryError };
+        }
+      },
       keepUnusedDataFor: parseInt(import.meta.env.VITE_CACHE_TTL) || 60,
     }),
   }),
