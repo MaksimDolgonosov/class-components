@@ -7,34 +7,18 @@ import Pagination from '../Pagination/Pagination';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import useLocalStorage from '../../hooks/useLocalStorage';
 import { Outlet, useNavigate } from 'react-router-dom';
-import './app.scss';
 import { ThemeContext } from '../../providers/ThemeProvider';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setPokemons } from '../../store/pokemonSlice';
 import { useGetPokemonsListQuery } from '../../api/apiSlice';
 import { convertToCSV } from '../../utils/convertToCSV';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import type { SerializedError } from '@reduxjs/toolkit';
-
-const formatQueryError = (
-  error: FetchBaseQueryError | SerializedError | undefined
-) => {
-  if (!error) {
-    return null;
-  }
-
-  if ('status' in error) {
-    if (typeof error.status === 'number') {
-      return `Server error: ${error.data}, status: ${error.status}`;
-    }
-
-    return 'Server error';
-  }
-};
+import { formatQueryError } from '../helpers/formatQueryError';
+import './app.scss';
 
 const App = () => {
   const navigate = useNavigate();
   const { pokemon, setPokemon } = useLocalStorage('pokemon', '');
+  const [forceRtkError, setForceRtkError] = useState(false);
   const { theme } = useContext<IThemeContext>(ThemeContext);
   const { pokemons: selectedPokemons } = useAppSelector(
     (state) => state.pokemons
@@ -53,8 +37,6 @@ const App = () => {
     offset: 0,
     pokemonId: null,
   });
-
-  const [forceRtkError, setForceRtkError] = useState(false);
 
   const { data, isFetching, error, refetch } = useGetPokemonsListQuery({
     limit: state.limit,
