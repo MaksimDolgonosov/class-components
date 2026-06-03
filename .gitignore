@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+/node_modules/
+/dist/
+/build/
+*.class
+*.o
+*.exe
+
+.env
+secret_key.txt
+
+node_modules/
+npm-debug.log*
+package-lock.json
