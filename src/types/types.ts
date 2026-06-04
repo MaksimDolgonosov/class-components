@@ -2,6 +2,7 @@ export interface FormData {
   name: string;
   age: number;
   email: string;
-  gender: string;
+  gender: 'male' | 'female';
+  country: string;
   terms: boolean;
 }

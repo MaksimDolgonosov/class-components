@@ -20,6 +20,7 @@ export const UserItem = ({ user }: UserItemProps) => {
       <div>Age: {user.age}</div>
       <div>Email: {user.email}</div>
       <div>Gender: {user.gender}</div>
+      <div>Country: {user.country}</div>
       <div>Terms: {user.terms ? 'Yes' : 'No'}</div>
       <button onClick={() => handleRemoveUser(user.name)}>Remove</button>
     </div>

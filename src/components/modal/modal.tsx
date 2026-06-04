@@ -1,5 +1,7 @@
 import './modal.scss';
 import { useEffect } from 'react';
+import { UncontrolledForm } from '../forms/uncontrolledForm';
+import { ReactHookForm } from '../forms/reactHookForm';
 
 interface ModalProps {
   onClose: () => void;
@@ -26,7 +28,12 @@ export const Modal = ({ onClose, type }: ModalProps) => {
         <h2>
           {type === 'uncontrolled' ? 'Uncontrolled form' : 'Controlled form'}
         </h2>
-        <button onClick={onClose}>Close</button>
+        <div className="modal-form">
+          {type === 'uncontrolled' ? <UncontrolledForm /> : <ReactHookForm />}
+        </div>
+        <button className="modal-close-button" onClick={onClose}>
+          X
+        </button>
       </div>
     </div>
   );
