@@ -1,0 +1,22 @@
+.footer {
+  width: 100%;
+  height: 10%;
+  padding: 10px;
+  border-top: 1px solid #9e6d2e;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.footer-school,
+.footer-year,
+.footer-author {
+  color: #9e6d2e;
+  font-size: 16px;
+  font-weight: bold;
+  a {
+    text-decoration: none;
+    color: #9e6d2e;
+  }
+}
