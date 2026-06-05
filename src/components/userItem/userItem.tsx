@@ -16,13 +16,22 @@ export const UserItem = ({ user }: UserItemProps) => {
 
   return (
     <div className="user-item">
-      <div>Name: {user.name}</div>
+      {user.image ? (
+        <img className="user-item__image" src={user.image} alt={user.name} />
+      ) : null}
+      <div>{user.name}</div>
       <div>Age: {user.age}</div>
-      <div>Email: {user.email}</div>
+      <div>{user.email}</div>
       <div>Gender: {user.gender}</div>
       <div>Country: {user.country}</div>
+
       <div>Terms: {user.terms ? 'Yes' : 'No'}</div>
-      <button onClick={() => handleRemoveUser(user.name)}>Remove</button>
+      <button
+        className="user-item__button"
+        onClick={() => handleRemoveUser(user.name)}
+      >
+        Remove
+      </button>
     </div>
   );
 };

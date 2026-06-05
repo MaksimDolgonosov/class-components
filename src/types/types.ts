@@ -4,5 +4,6 @@ export interface FormData {
   email: string;
   gender: 'male' | 'female';
   country: string;
+  image: string;
   terms: boolean;
 }

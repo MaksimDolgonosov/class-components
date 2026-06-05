@@ -23,13 +23,17 @@ export const Modal = ({ onClose, type }: ModalProps) => {
   }, [onClose]);
 
   return (
-    <div className="modal-wrapper" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-wrapper" onMouseDown={onClose}>
+      <div className="modal-content" onMouseDown={(e) => e.stopPropagation()}>
         <h2>
           {type === 'uncontrolled' ? 'Uncontrolled form' : 'Controlled form'}
         </h2>
         <div className="modal-form">
-          {type === 'uncontrolled' ? <UncontrolledForm /> : <ReactHookForm />}
+          {type === 'uncontrolled' ? (
+            <UncontrolledForm onClose={onClose} />
+          ) : (
+            <ReactHookForm />
+          )}
         </div>
         <button className="modal-close-button" onClick={onClose}>
           X

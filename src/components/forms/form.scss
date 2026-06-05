@@ -1,7 +1,11 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
+  input:focus,
+  select:focus {
+    outline: none;
+  }
   input {
     padding: 10px;
     border-radius: 5px;
@@ -24,6 +28,10 @@
   label {
     font-size: 14px;
     color: #664820;
+  }
+  &__error {
+    font-size: 13px;
+    color: #c0392b;
   }
   input[type='checkbox'] {
     width: 20px;
@@ -77,4 +85,9 @@
   button:focus {
     background-color: #d3913b;
   }
+}
+.form__image-size {
+  font-size: 13px;
+  color: #9e6d2e;
+  margin-top: -5px;
 }

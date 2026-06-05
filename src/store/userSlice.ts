@@ -14,7 +14,7 @@ export const usersSlice = createSlice({
   initialState,
   reducers: {
     addUser: (state, action: PayloadAction<FormData>) => {
-      state.users.push(action.payload);
+      state.users.unshift(action.payload);
     },
     removeUser: (state, action: PayloadAction<string>) => {
       state.users = state.users.filter((user) => user.name !== action.payload);
