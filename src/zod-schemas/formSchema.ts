@@ -10,7 +10,7 @@ export const imageSchema = z
     message: 'Only PNG and JPEG images are allowed',
   });
 
-export const uncontrolledFormSchema = z
+export const formSchema = z
   .object({
     name: z
       .string()
@@ -25,13 +25,15 @@ export const uncontrolledFormSchema = z
     password: z.string().min(4, 'Password is required'),
     confirmPassword: z.string().min(1, 'Confirm password is required'),
     image: imageSchema,
-    terms: z.literal(true, {
-      errorMap: () => ({ message: 'You must accept the terms and conditions' }),
-    }),
+    terms: z
+      .boolean()
+      .refine((value) => value === true, {
+        message: 'You must accept the terms and conditions',
+      }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
 
-export type UncontrolledFormInput = z.infer<typeof uncontrolledFormSchema>;
+export type FormInput = z.infer<typeof formSchema>;

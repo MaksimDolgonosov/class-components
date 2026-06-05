@@ -6,13 +6,13 @@ import { fileToBase64 } from '../../utils/fileToBase64';
 import { MAX_IMAGE_SIZE_BYTES } from '../../utils/validateImage';
 import {
   imageSchema,
-  uncontrolledFormSchema,
-  type UncontrolledFormInput,
-} from '../../zod-schemas/uncontrolledFormSchema';
+  formSchema,
+  type FormInput,
+} from '../../zod-schemas/formSchema';
 import { getPasswordBorder } from '../../utils/getPassBorder';
 import './form.scss';
 
-type FormErrors = Partial<Record<keyof UncontrolledFormInput, string>>;
+type FormErrors = Partial<Record<keyof FormInput, string>>;
 
 const getFormErrors = (
   fieldErrors: Record<string, string[] | undefined>
@@ -78,7 +78,7 @@ export const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
       terms: termsRef.current?.checked ?? false,
     };
 
-    const result = uncontrolledFormSchema.safeParse(rawData);
+    const result = formSchema.safeParse(rawData);
 
     if (!result.success) {
       setFormErrors(getFormErrors(result.error.flatten().fieldErrors));
