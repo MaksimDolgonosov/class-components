@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { COUNTRIES } from '../constants/countries';
 import { MAX_IMAGE_SIZE_BYTES } from '../utils/validateImage';
 
 export const imageSchema = z
@@ -27,7 +28,9 @@ export const formSchema = z
     gender: z.enum(['select gender', 'male', 'female'], {
       errorMap: () => ({ message: 'Select gender' }),
     }),
-    country: z.string().min(1, 'Country is required'),
+    country: z.enum(COUNTRIES, {
+      errorMap: () => ({ message: 'Select a country from the list' }),
+    }),
     password: z
       .string()
       .min(4, 'Password is required and must be at least 4 characters'),
