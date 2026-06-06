@@ -28,9 +28,12 @@ export const formSchema = z
     gender: z.enum(['select gender', 'male', 'female'], {
       errorMap: () => ({ message: 'Select gender' }),
     }),
-    country: z.enum(COUNTRIES, {
-      errorMap: () => ({ message: 'Select a country from the list' }),
-    }),
+    country: z
+      .string()
+      .min(1, 'Country is required')
+      .refine((value) => (COUNTRIES as readonly string[]).includes(value), {
+        message: 'Select a country from the list',
+      }),
     password: z
       .string()
       .min(4, 'Password is required and must be at least 4 characters'),
