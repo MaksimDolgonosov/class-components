@@ -1,17 +1,17 @@
-import { FormData } from '../../types/types';
+import { User } from '../../types/types';
 import './user-item.scss';
 import { removeUser } from '../../store/userSlice';
 import { useDispatch } from 'react-redux';
 
 interface UserItemProps {
-  user: FormData;
+  user: User;
 }
 
 export const UserItem = ({ user }: UserItemProps) => {
   const dispatch = useDispatch();
 
-  const handleRemoveUser = (name: string) => {
-    dispatch(removeUser(name));
+  const handleRemoveUser = (userId: string) => {
+    dispatch(removeUser(userId));
   };
 
   return (
@@ -19,16 +19,15 @@ export const UserItem = ({ user }: UserItemProps) => {
       {user.image ? (
         <img className="user-item__image" src={user.image} alt={user.name} />
       ) : null}
-      <div>{user.name}</div>
+      <div>Name: {user.name}</div>
       <div>Age: {user.age}</div>
-      <div>{user.email}</div>
+      <div>Email: {user.email}</div>
       <div>Gender: {user.gender}</div>
       <div>Country: {user.country}</div>
-
       <div>Terms: {user.terms ? 'Yes' : 'No'}</div>
       <button
         className="user-item__button"
-        onClick={() => handleRemoveUser(user.name)}
+        onClick={() => handleRemoveUser(user.id)}
       >
         Remove
       </button>

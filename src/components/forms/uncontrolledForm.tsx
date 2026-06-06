@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useId } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { addUser } from '../../store/userSlice';
-import { FormData } from '../../types/types';
+import { User } from '../../types/types';
 import { fileToBase64 } from '../../utils/fileToBase64';
 import { MAX_IMAGE_SIZE_BYTES } from '../../utils/validateImage';
 import {
@@ -22,6 +22,7 @@ const getFormErrors = (
   ) as FormErrors;
 
 export const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
+  const id = useId();
   const nameRef = useRef<HTMLInputElement>(null);
   const ageRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -46,7 +47,7 @@ export const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
       return;
     }
 
-    const imageResult = imageSchema.safeParse(file);
+    const imageResult = imageSchema.safeParse(imageRef.current?.files);
     setFormErrors((prev) => ({
       ...prev,
       image: imageResult.success
@@ -74,7 +75,7 @@ export const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
       country: countryRef.current?.value ?? '',
       password: passwordRef.current?.value ?? '',
       confirmPassword: confirmPasswordRef.current?.value ?? '',
-      image: imageRef.current?.files?.[0],
+      image: imageRef.current?.files,
       terms: termsRef.current?.checked ?? false,
     };
 
@@ -86,9 +87,10 @@ export const UncontrolledForm = ({ onClose }: { onClose: () => void }) => {
     }
 
     setFormErrors({});
-    const imageBase64 = await fileToBase64(result.data.image);
+    const imageBase64 = await fileToBase64(result.data.image[0]);
 
-    const formItem: FormData = {
+    const formItem: User = {
+      id,
       name: result.data.name,
       age: result.data.age,
       email: result.data.email,

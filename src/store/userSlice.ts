@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FormData } from '../types/types';
+import { User } from '../types/types';
 
 interface ISelectedPokemons {
-  users: FormData[];
+  users: User[];
 }
 
 const initialState: ISelectedPokemons = {
@@ -13,11 +13,11 @@ export const usersSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
-    addUser: (state, action: PayloadAction<FormData>) => {
+    addUser: (state, action: PayloadAction<User>) => {
       state.users.unshift(action.payload);
     },
     removeUser: (state, action: PayloadAction<string>) => {
-      state.users = state.users.filter((user) => user.name !== action.payload);
+      state.users = state.users.filter((user) => user.id !== action.payload);
     },
   },
 });

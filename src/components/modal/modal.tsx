@@ -32,7 +32,7 @@ export const Modal = ({ onClose, type }: ModalProps) => {
           {type === 'uncontrolled' ? (
             <UncontrolledForm onClose={onClose} />
           ) : (
-            <ReactHookForm />
+            <ReactHookForm onClose={onClose} />
           )}
         </div>
         <button className="modal-close-button" onClick={onClose}>

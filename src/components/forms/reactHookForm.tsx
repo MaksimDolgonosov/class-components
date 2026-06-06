@@ -5,9 +5,17 @@ import { formSchema, FormInput } from '../../zod-schemas/formSchema';
 import { useState } from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { MAX_IMAGE_SIZE_BYTES } from '../../utils/validateImage';
-export const ReactHookForm = () => {
+import { addUser } from '../../store/userSlice';
+import { useAppDispatch } from '../../store/hooks';
+import { useId } from 'react';
+import { fileToBase64 } from '../../utils/fileToBase64';
+import { getPasswordBorder } from '../../utils/getPassBorder';
+
+export const ReactHookForm = ({ onClose }: { onClose: () => void }) => {
   const [selectedImageSize, setSelectedImageSize] = useState(0);
   const countries = useAppSelector((state) => state.countries.countries);
+  const dispatch = useAppDispatch();
+  const id = useId();
 
   const form = useForm<FormInput>({
     resolver: zodResolver(formSchema) as Resolver<FormInput>,
@@ -16,7 +24,7 @@ export const ReactHookForm = () => {
       name: '',
       age: 0,
       email: '',
-      gender: 'male',
+      gender: 'select gender',
       country: '',
       password: '',
       confirmPassword: '',
@@ -30,8 +38,32 @@ export const ReactHookForm = () => {
     formState: { errors, isValid },
   } = form;
 
-  const onSubmit: SubmitHandler<FormInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<FormInput> = async (data) => {
+    const file = data.image instanceof File ? data.image : data.image?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const imageBase64 = await fileToBase64(file);
+
+    dispatch(
+      addUser({
+        id,
+        name: data.name,
+        age: data.age,
+        email: data.email,
+        gender: data.gender,
+        country: data.country,
+        image: imageBase64,
+        terms: data.terms,
+      })
+    );
+    onClose();
+  };
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const password = e.target.value;
+    e.target.style.border = getPasswordBorder(password);
   };
 
   return (
@@ -56,6 +88,9 @@ export const ReactHookForm = () => {
 
       <label htmlFor="gender">Gender</label>
       <select id="gender" {...register('gender')}>
+        <option defaultValue="select gender" disabled>
+          Select gender
+        </option>
         <option value="male">Male</option>
         <option value="female">Female</option>
       </select>
@@ -85,6 +120,7 @@ export const ReactHookForm = () => {
         id="password"
         type="password"
         {...register('password')}
+        onChange={handlePasswordChange}
       />
       {errors.password ? (
         <span className="form__error">{errors.password.message}</span>
@@ -106,6 +142,7 @@ export const ReactHookForm = () => {
         type="file"
         accept="image/png,image/jpeg,.png,.jpg,.jpeg"
         {...register('image', {
+          setValueAs: (fileList: FileList) => fileList[0],
           onChange: (e) => {
             const file = e.target.files?.[0];
             setSelectedImageSize(file?.size ?? 0);
