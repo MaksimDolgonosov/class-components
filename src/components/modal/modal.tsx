@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { UncontrolledForm } from '../forms/uncontrolledForm';
 import { ReactHookForm } from '../forms/reactHookForm';
 
-interface ModalProps {
+export interface ModalProps {
   onClose: () => void;
   type: 'uncontrolled' | 'controlled';
 }

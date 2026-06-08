@@ -17,6 +17,8 @@ export default mergeConfig(
           'src/**/*.test.{js,jsx,ts,tsx}',
           'src/**/*.spec.{js,jsx,ts,tsx}',
           'src/index.{js,jsx,ts,tsx}',
+          'src/main.tsx',
+          'src/types/types.ts',
           'src/setupTests.{js,ts}',
           'src/**/*.d.ts',
         ],
