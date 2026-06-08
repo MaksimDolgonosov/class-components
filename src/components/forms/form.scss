@@ -1,0 +1,115 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  input:focus,
+  select:focus {
+    outline: none;
+  }
+  input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #9e6d2e;
+  }
+  select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #9e6d2e;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 1);
+
+    &:invalid {
+      color: rgba(0, 0, 0, 0.5);
+    }
+    &:valid {
+      color: rgba(0, 0, 0, 1);
+    }
+  }
+  label {
+    font-size: 14px;
+    color: #664820;
+  }
+  &__error {
+    font-size: 13px;
+    color: #c0392b;
+  }
+  input[type='checkbox'] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    color: #9e6d2e;
+    border: 1px solid #9e6d2e;
+    border-radius: 5px;
+    display: inline;
+    &:checked {
+      background-color: #9e6d2e;
+      border: none;
+      cursor: pointer;
+    }
+  }
+  .form__terms {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    label {
+      font-size: 16px;
+      color: #9e6d2e;
+      cursor: pointer;
+    }
+  }
+  .form__terms:hover label {
+    color: #d3913b;
+  }
+  .form__terms:active label {
+    color: #9e6d2e;
+  }
+  .form__terms:focus-within label {
+    color: #d3913b;
+  }
+  &__button {
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #9e6d2e;
+    background-color: #9e6d2e;
+    color: #fff;
+    cursor: pointer;
+    &:disabled {
+      background-color: #9e6d2e;
+      cursor: not-allowed;
+    }
+  }
+  button:disabled {
+    background-color: #9e6d2e;
+    cursor: not-allowed;
+    &:hover {
+      background-color: #9e6d2e;
+    }
+    &:active {
+      background-color: #9e6d2e;
+    }
+    &:focus {
+      background-color: #9e6d2e;
+    }
+    &:disabled {
+      background-color: #9e6d2e;
+      cursor: not-allowed;
+    }
+  }
+
+  button:hover {
+    background-color: #d3913b;
+  }
+  button:active {
+    background-color: #9e6d2e;
+  }
+  button:focus {
+    background-color: #d3913b;
+  }
+}
+.form__image-size {
+  font-size: 13px;
+  color: #9e6d2e;
+  margin-top: -5px;
+}

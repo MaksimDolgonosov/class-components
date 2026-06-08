@@ -1,0 +1,77 @@
+﻿node.exe : 16:07:01 [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is depreca
+ted, please use `oxc` instead.
+C:\Program Files\nodejs\npx.ps1:29 знак:3
++   & $NODE_EXE $NPX_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (16:07:01 [vite]... `oxc` instead.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+16:07:01 [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option i
+s deprecated, please use `optimizeDeps.rolldownOptions` instead.
+Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbu
+ild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
+
+ RUN  v4.1.5 C:/Users/user/Desktop/RSschool2026-React/class-components
+      Coverage enabled with v8
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  16:07:02
+   Duration  5.44s (transform 848ms, setup 445ms, import 1.00s, tests 426ms, environment 2.66s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |    7.08 |    11.68 |    6.25 |    7.39 |                   
+ src               |       0 |        0 |     100 |       0 |                   
+  main.tsx         |       0 |        0 |     100 |       0 | 13-25             
+ src/api           |      12 |     9.52 |    12.5 |      12 |                   
+  apiSlice.ts      |   19.04 |    28.57 |   33.33 |   19.04 | 20-78             
+  helpers.ts       |    6.89 |        0 |       0 |    6.89 | 20-58,65-92       
+ ...components/App |       0 |        0 |       0 |       0 |                   
+  App.tsx          |       0 |        0 |       0 |       0 | 19-200            
+ ...mponents/Error |       0 |        0 |       0 |       0 |                   
+  Error.tsx        |       0 |        0 |       0 |       0 | 5-6               
+ .../ErrorBoundary |       0 |        0 |       0 |       0 |                   
+  ...rBoundary.tsx |       0 |        0 |       0 |       0 | 14-34             
+ ...nts/Pagination |       0 |        0 |       0 |       0 |                   
+  Pagination.tsx   |       0 |        0 |       0 |       0 | 3-25              
+ ...ts/PokemonItem |       0 |        0 |       0 |       0 |                   
+  PokemonItem.tsx  |       0 |        0 |       0 |       0 | 7-32              
+ ...ts/PokemonList |       0 |        0 |       0 |       0 |                   
+  PokemonList.tsx  |       0 |        0 |       0 |       0 | 6-11              
+ ...onents/Results |       0 |        0 |       0 |       0 |                   
+  Results.tsx      |       0 |        0 |       0 |       0 | 11-26             
+ .../ThemeSwitcher |       0 |        0 |       0 |       0 |                   
+  ...eSwitcher.tsx |       0 |        0 |       0 |       0 | 6-9               
+ ...ts/TopControls |       0 |        0 |       0 |       0 |                   
+  TopControls.tsx  |       0 |        0 |       0 |       0 | 9-29              
+ src/hooks         |       0 |        0 |       0 |       0 |                   
+  ...calStorage.ts |       0 |        0 |       0 |       0 | 3-25              
+ src/pages         |       0 |      100 |       0 |       0 |                   
+  AboutPage.tsx    |       0 |      100 |       0 |       0 | 7-42              
+  Page404.tsx      |       0 |      100 |       0 |       0 | 5-14              
+ src/providers     |       0 |        0 |       0 |       0 |                   
+  ...eProvider.tsx |       0 |        0 |       0 |       0 | 4-16              
+ src/services      |       0 |        0 |       0 |       0 |                   
+  ...okemonInfo.ts |       0 |        0 |       0 |       0 | 6-30              
+  fetchPokemons.ts |       0 |        0 |       0 |       0 | 12-37             
+ src/store         |   45.45 |      100 |      20 |   45.45 |                   
+  hooks.ts         |       0 |      100 |     100 |       0 | 4-5               
+  pokemonSlice.ts  |   42.85 |      100 |       0 |   42.85 | 17-24             
+ src/utils         |       0 |      100 |       0 |       0 |                   
+  convertToCSV.ts  |       0 |      100 |       0 |       0 | 2-7               
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 7.08% ( 19/268 )
+Branches     : 11.68% ( 18/154 )
+Functions    : 6.25% ( 5/80 )
+Lines        : 7.39% ( 19/257 )
+================================================================================
+ERROR: Coverage for lines (7.39%) does not meet global threshold (50%)
+ERROR: Coverage for functions (6.25%) does not meet global threshold (50%)
+ERROR: Coverage for statements (7.08%) does not meet global threshold (80%)
+ERROR: Coverage for branches (11.68%) does not meet global threshold (50%)
