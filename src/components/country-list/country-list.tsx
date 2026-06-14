@@ -1,9 +1,13 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useRef } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import type { Country } from '../../types';
 import { CountryCard } from '../country-card/country-card';
 import { getPopulationForYear, createYearDataMap } from '../../utils/data-transformers';
 
 import styles from './country-list.module.css';
+
+const ESTIMATED_CARD_HEIGHT = 280;
+const CARD_GAP = 16;
 
 type CountryListProps = {
   countries: Country[];
@@ -25,6 +29,8 @@ export const CountryList = memo(
     sortField,
     sortOrder,
   }: CountryListProps) => {
+    const parentRef = useRef<HTMLDivElement>(null);
+
     const filteredCountries = useMemo(() => {
       const query = searchQuery.toLowerCase();
 
@@ -52,16 +58,40 @@ export const CountryList = memo(
       return withPopulation.map(({ country }) => country);
     }, [countries, searchQuery, selectedRegion, selectedYear, sortField, sortOrder]);
 
+    const virtualizer = useVirtualizer({
+      count: filteredCountries.length,
+      getScrollElement: () => parentRef.current,
+      estimateSize: () => ESTIMATED_CARD_HEIGHT,
+      gap: CARD_GAP,
+      overscan: 5,
+    });
+
     return (
-      <div className={styles.countryList}>
-        {filteredCountries.map((country) => (
-          <CountryCard
-            key={country.id}
-            country={country}
-            selectedYear={selectedYear}
-            selectedColumns={selectedColumns}
-          />
-        ))}
+      <div ref={parentRef} className={styles.scrollContainer}>
+        <div
+          className={styles.virtualList}
+          style={{ height: `${virtualizer.getTotalSize()}px` }}
+        >
+          {virtualizer.getVirtualItems().map((virtualItem) => {
+            const country = filteredCountries[virtualItem.index];
+
+            return (
+              <div
+                key={country.id}
+                data-index={virtualItem.index}
+                ref={virtualizer.measureElement}
+                className={styles.virtualItem}
+                style={{ transform: `translateY(${virtualItem.start}px)` }}
+              >
+                <CountryCard
+                  country={country}
+                  selectedYear={selectedYear}
+                  selectedColumns={selectedColumns}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }

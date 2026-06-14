@@ -1,3 +1,18 @@
-.countryList {
+.scrollContainer {
+  height: calc(100vh - 280px);
+  min-height: 400px;
+  overflow: auto;
   padding: 16px;
+}
+
+.virtualList {
+  position: relative;
+  width: 100%;
+}
+
+.virtualItem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
