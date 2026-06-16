@@ -7,7 +7,7 @@ const Error = ({ error, comment, onRetry }: ErrorProps) => {
     <div className="error">
       <div className="error-text">{error}</div>
       <div className="error-picture">
-        <img src={ErrorPicture} alt="Error" />
+        <img src={ErrorPicture.src} alt="Error" />
       </div>
       {comment ? <div className="error-comment">{comment}</div> : null}
       {onRetry ? (

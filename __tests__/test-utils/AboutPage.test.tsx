@@ -1,4 +1,4 @@
-import AboutPage from '../../src/pages/AboutPage';
+import AboutPage from '../../src/views/AboutPage';
 import { describe, it, expect } from 'vitest';
 import { renderWithRouter } from './renderWithRouter';
 

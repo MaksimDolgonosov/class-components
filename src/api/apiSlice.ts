@@ -13,6 +13,7 @@ import {
 } from './helpers';
 
 export const POKEAPI_BASE = 'https://pokeapi.co/api/v2/';
+const CACHE_TTL = Number(process.env.NEXT_PUBLIC_CACHE_TTL ?? 60);
 
 export const apiSlice = createApi({
   reducerPath: 'pokemonApi',
@@ -58,7 +59,7 @@ export const apiSlice = createApi({
             return { error: error as FetchBaseQueryError };
           }
         },
-        keepUnusedDataFor: parseInt(import.meta.env.VITE_CACHE_TTL) || 60,
+        keepUnusedDataFor: CACHE_TTL,
       }
     ),
     getPokemonByName: builder.query<PokemonInfo, string>({
@@ -82,7 +83,7 @@ export const apiSlice = createApi({
           return { error: error as FetchBaseQueryError };
         }
       },
-      keepUnusedDataFor: parseInt(import.meta.env.VITE_CACHE_TTL) || 60,
+      keepUnusedDataFor: CACHE_TTL,
     }),
   }),
 });

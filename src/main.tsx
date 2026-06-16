@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './components/App/App';
 import PokemonInfo from './components/PokemonInfo/PokemonInfo';
-import AboutPage from './pages/AboutPage';
-import Page404 from './pages/Page404';
+import AboutPage from './views/AboutPage';
+import Page404 from './views/Page404';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { Provider } from 'react-redux';
 import { store } from './store';
@@ -12,11 +12,11 @@ import './styles.scss';
 
 const rootElement = document.getElementById('root');
 
-const basePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, '') || '/';
 
 if (basePath && window.location.pathname === basePath) {
   window.location.replace(
-    `${import.meta.env.BASE_URL}${window.location.search}${window.location.hash}`
+    `${process.env.NEXT_PUBLIC_BASE_PATH}${window.location.search}${window.location.hash}`
   );
 }
 
@@ -27,7 +27,9 @@ if (rootElement) {
       <Provider store={store}>
         <ThemeProvider>
           <BrowserRouter
-            basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}
+            basename={
+              process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, '') || undefined
+            }
             future={{
               v7_startTransition: true,
               v7_relativeSplatPath: true,

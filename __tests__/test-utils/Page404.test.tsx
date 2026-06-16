@@ -1,4 +1,4 @@
-import Page404 from '../../src/pages/Page404';
+import Page404 from '../../src/views/Page404';
 import { describe, it, expect } from 'vitest';
 import { renderWithRouter } from './renderWithRouter';
 
