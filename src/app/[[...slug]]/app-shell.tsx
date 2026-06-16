@@ -10,13 +10,15 @@ import Page404 from '../../views/Page404';
 import { ThemeProvider } from '../../providers/ThemeProvider';
 import { store } from '../../store';
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, '') || '/';
-
 export default function AppShell() {
   useEffect(() => {
-    if (basePath && window.location.pathname === basePath) {
+    const envBasePath = process.env.NEXT_PUBLIC_BASE_PATH;
+    if (!envBasePath) return;
+
+    const normalizedBase = envBasePath.replace(/\/$/, '');
+    if (window.location.pathname === normalizedBase) {
       window.location.replace(
-        `${process.env.NEXT_PUBLIC_BASE_PATH}${window.location.search}${window.location.hash}`
+        `${envBasePath}${window.location.search}${window.location.hash}`
       );
     }
   }, []);

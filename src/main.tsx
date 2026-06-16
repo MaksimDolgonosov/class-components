@@ -12,12 +12,14 @@ import './styles.scss';
 
 const rootElement = document.getElementById('root');
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, '') || '/';
-
-if (basePath && window.location.pathname === basePath) {
-  window.location.replace(
-    `${process.env.NEXT_PUBLIC_BASE_PATH}${window.location.search}${window.location.hash}`
-  );
+const envBasePath = process.env.NEXT_PUBLIC_BASE_PATH;
+if (envBasePath) {
+  const normalizedBase = envBasePath.replace(/\/$/, '');
+  if (window.location.pathname === normalizedBase) {
+    window.location.replace(
+      `${envBasePath}${window.location.search}${window.location.hash}`
+    );
+  }
 }
 
 if (rootElement) {
