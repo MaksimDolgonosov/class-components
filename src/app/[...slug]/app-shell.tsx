@@ -5,7 +5,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import App from '../../components/App/App';
 import PokemonInfo from '../../components/PokemonInfo/PokemonInfo';
-import AboutPage from '../../views/AboutPage';
 import Page404 from '../../views/Page404';
 import { ThemeProvider } from '../../providers/ThemeProvider';
 import { store } from '../../store';
@@ -40,7 +39,6 @@ export default function AppShell() {
               <Route path="/" element={<App />}>
                 <Route path="pokemon" element={<PokemonInfo />} />
               </Route>
-              <Route path="/about" element={<AboutPage />} />
               <Route path="*" element={<Page404 />} />
             </Routes>
           </BrowserRouter>

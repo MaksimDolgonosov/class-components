@@ -1,12 +1,14 @@
+'use client';
+
 import './about-page.scss';
-import { useNavigate } from 'react-router-dom';
+import NextLink from 'next/link';
 import { useContext } from 'react';
 import { ThemeContext } from '../providers/ThemeProvider';
 import { IThemeContext } from '../types/types';
 
 const AboutPage = () => {
-  const navigate = useNavigate();
   const { theme } = useContext<IThemeContext>(ThemeContext);
+
   return (
     <div className={`about-page ${theme}`}>
       <h1>About Page</h1>
@@ -37,12 +39,9 @@ const AboutPage = () => {
             RS School React course
           </a>
         </p>
-        <button
-          className={`about-page-back-button ${theme}`}
-          onClick={() => navigate('/')}
-        >
+        <NextLink href="/" prefetch={false} className={`about-page-back-button ${theme}`}>
           Back to the main page
-        </button>
+        </NextLink>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ describe('AboutPage', () => {
     const { getByText, getByRole } = renderWithRouter(<AboutPage />);
     expect(getByText('About Page')).toBeDefined();
     expect(
-      getByRole('button', { name: 'Back to the main page' })
+      getByRole('link', { name: 'Back to the main page' })
     ).toBeDefined();
   });
 });

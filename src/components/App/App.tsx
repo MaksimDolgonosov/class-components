@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
+import NextLink from 'next/link';
 import TopControls from '../TopControls/TopControls';
 import Results from '../Results/Results';
 import { IThemeContext, PokemonState } from '../../types/types';
@@ -137,9 +138,9 @@ const App = () => {
         <button className="about-refetch" onClick={handleRetryFetch}>
           Manual refetch
         </button>
-        <button className="about-button" onClick={() => navigate('/about')}>
+        <NextLink href="/about" className="about-button">
           About page
-        </button>
+        </NextLink>
         <ThemeSwitcher />
       </div>
       <br />
