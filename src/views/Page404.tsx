@@ -1,18 +1,21 @@
-import { useNavigate } from 'react-router-dom';
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { Link } from '../i18n/navigation';
 import ErrorPicture from '../assets/error/PngItem.png';
-import './page404.scss';
 
 const Page404 = () => {
-  const navigate = useNavigate();
+  const t = useTranslations('notFound');
+
   return (
     <div className="page404">
-      <h1>Page not found</h1>
+      <h1>{t('title')}</h1>
       <div className="error-picture">
         <img src={ErrorPicture.src} alt="Error" />
       </div>
-      <button className="page404-back-button" onClick={() => navigate('/')}>
-        Back to the main page
-      </button>
+      <Link href="/" className="page404-back-button">
+        {t('back')}
+      </Link>
     </div>
   );
 };

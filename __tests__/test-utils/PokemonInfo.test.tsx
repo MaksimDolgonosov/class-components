@@ -1,9 +1,9 @@
 import PokemonInfo from '../../src/components/PokemonInfo/PokemonInfo';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
-import { Outlet, Route, Routes } from 'react-router-dom';
-import { renderWithRouter } from './renderWithRouter';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import { useGetPokemonByNameQuery } from '../../src/api/apiSlice';
+import { store } from '../../src/store';
 
 vi.mock('../../src/api/apiSlice', async (importOriginal) => {
   const actual =
@@ -25,32 +25,21 @@ const mockPokemonInfo = {
   captureRate: 45,
 };
 
-const createLayout = (context: {
-  pokemonId: string | null;
-  setPokemonId: ReturnType<typeof vi.fn>;
-}) => {
-  const Layout = () => <Outlet context={context} />;
-  return Layout;
-};
-
 const renderPokemonInfo = (
-  context = {
-    pokemonId: 'pikachu' as string | null,
-    setPokemonId: vi.fn(),
-  }
+  props: {
+    pokemonId?: string | null;
+    onClose?: ReturnType<typeof vi.fn>;
+  } = {}
 ) => {
-  const Layout = createLayout(context);
+  const onClose = props.onClose ?? vi.fn();
 
-  renderWithRouter(
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route path="pokemon" element={<PokemonInfo />} />
-      </Route>
-    </Routes>,
-    { route: '/pokemon' }
+  render(
+    <Provider store={store}>
+      <PokemonInfo pokemonId={props.pokemonId ?? 'pikachu'} onClose={onClose} />
+    </Provider>
   );
 
-  return context;
+  return { onClose };
 };
 
 const mockQueryResult = (
@@ -139,16 +128,16 @@ describe('PokemonInfo', () => {
   });
 
   it('skips query when pokemonId is empty', () => {
-    renderPokemonInfo({ pokemonId: null, setPokemonId: vi.fn() });
+    renderPokemonInfo({ pokemonId: null });
 
     expect(useGetPokemonByNameQuery).toHaveBeenCalledWith('', { skip: true });
   });
 
-  it('calls setPokemonId with null when Close is clicked', () => {
-    const context = renderPokemonInfo();
+  it('calls onClose when Close is clicked', () => {
+    const { onClose } = renderPokemonInfo();
 
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
 
-    expect(context.setPokemonId).toHaveBeenCalledWith(null);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

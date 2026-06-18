@@ -42,8 +42,10 @@ h1 {
     cursor: pointer;
   }
 }
-.about-page-back-button {
+a.about-page-back-button {
   display: block;
+  text-decoration: none;
+  text-align: center;
   width: 210px;
   padding: 10px;
   border: 1px solid $primary-color;

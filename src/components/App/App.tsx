@@ -1,5 +1,9 @@
-import { useState, useEffect, useContext } from 'react';
-import NextLink from 'next/link';
+'use client';
+
+import { useState, useEffect, useContext, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { Link, usePathname, useRouter } from '../../i18n/navigation';
 import TopControls from '../TopControls/TopControls';
 import Results from '../Results/Results';
 import { IThemeContext, PokemonState } from '../../types/types';
@@ -7,17 +11,36 @@ import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import Pagination from '../Pagination/Pagination';
 import ThemeSwitcher from '../ThemeSwitcher/ThemeSwitcher';
 import useLocalStorage from '../../hooks/useLocalStorage';
-import { Outlet, useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../../providers/ThemeProvider';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setPokemons } from '../../store/pokemonSlice';
 import { useGetPokemonsListQuery } from '../../api/apiSlice';
 import { convertToCSV } from '../../utils/convertToCSV';
 import { formatQueryError } from '../helpers/formatQueryError';
+import LangSwitcher from '../LangSwitcher/LangSwitcher';
 import './app.scss';
 
-const App = () => {
-  const navigate = useNavigate();
+type AppProps = {
+  children: React.ReactNode;
+};
+
+const buildPageUrl = (offset: number, pokemon?: string | null) => {
+  const params = new URLSearchParams();
+  params.set('page', String(Math.floor(offset / 10) + 1));
+
+  if (pokemon) {
+    params.set('pokemon', pokemon);
+    return `/pokemon?${params.toString()}`;
+  }
+
+  return `/?${params.toString()}`;
+};
+
+function AppContent({ children }: AppProps) {
+  const t = useTranslations('app');
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { pokemon, setPokemon } = useLocalStorage('pokemon', '');
   const [forceRtkError, setForceRtkError] = useState(false);
   const { theme } = useContext<IThemeContext>(ThemeContext);
@@ -26,22 +49,20 @@ const App = () => {
   );
   const dispatch = useAppDispatch();
 
-  const [state, setState] = useState<PokemonState>({
-    pokemon: pokemon,
-    // loading: true,
-    // error: null,
-    // next: null,
-    // previous: null,
-    // data: [],
+  const page = Math.max(1, Number(searchParams?.get('page') ?? '1'));
+  const offset = (page - 1) * 10;
+
+  const [state, setState] = useState<
+    Omit<PokemonState, 'offset' | 'pokemonId'>
+  >({
+    pokemon,
     errorTest: false,
     limit: 10,
-    offset: 0,
-    pokemonId: null,
   });
 
   const { data, isFetching, error, refetch } = useGetPokemonsListQuery({
     limit: state.limit,
-    offset: state.offset,
+    offset,
     forceError: forceRtkError,
   });
 
@@ -51,36 +72,35 @@ const App = () => {
   const errorMessage = formatQueryError(error);
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    params.set('page', String(state.offset + 1));
-
-    if (state.pokemonId) {
-      params.set('pokemon', state.pokemonId);
-    }
-
-    navigate(
-      {
-        pathname: state.pokemonId ? '/pokemon' : '/',
-        search: `?${params.toString()}`,
-      },
-      { replace: true }
-    );
-  }, [state.offset, state.pokemonId, navigate]);
-
-  useEffect(() => {
     setState((prev) => ({ ...prev, pokemon }));
   }, [pokemon]);
+
+  useEffect(() => {
+    if (!searchParams?.get('page')) {
+      router.replace('/?page=1');
+    }
+  }, [router, searchParams]);
 
   const onChangePage = (direction: 'previous' | 'next') => {
     if (previous === null && direction === 'previous') {
       return;
     }
 
+    let newOffset = offset;
+
     if (direction === 'previous') {
-      setState((prev) => ({ ...prev, offset: Math.max(0, prev.offset - 10) }));
+      newOffset = Math.max(0, offset - 10);
     } else if (direction === 'next' && next) {
-      setState((prev) => ({ ...prev, offset: prev.offset + 10 }));
+      newOffset = offset + 10;
+    } else {
+      return;
     }
+
+    const pokemonName = pathname?.endsWith('/pokemon')
+      ? searchParams?.get('pokemon')
+      : null;
+
+    router.push(buildPageUrl(newOffset, pokemonName));
   };
 
   const handleSearch = (searchTerm: string) => {
@@ -89,11 +109,12 @@ const App = () => {
       return;
     }
     setPokemon(trimmed);
-    setState((prev) => ({ ...prev, offset: 0, pokemon: trimmed }));
+    setState((prev) => ({ ...prev, pokemon: trimmed }));
+    router.push(buildPageUrl(0));
   };
 
   const handleErrorTest = () => {
-    setState((prev: PokemonState) => ({ ...prev, errorTest: true }));
+    setState((prev) => ({ ...prev, errorTest: true }));
   };
 
   const filteredData = pokemons.filter((item) =>
@@ -101,11 +122,7 @@ const App = () => {
   );
 
   const handlePokemonClick = (name: string) => {
-    setState((prev) => ({ ...prev, pokemonId: name }));
-  };
-
-  const setPokemonId = (pokemonId: string) => {
-    setState((prev) => ({ ...prev, pokemonId }));
+    router.push(buildPageUrl(offset, name));
   };
 
   const handleRetryFetch = () => {
@@ -126,22 +143,23 @@ const App = () => {
 
   return (
     <div className={`app ${theme}`}>
-      <h1 className="title">Pokemon finder</h1>
+      <h1 className="title">{t('title')}</h1>
       <br />
       <div className="app-header-actions">
         <button
           className="about-error-test"
           onClick={() => setForceRtkError(true)}
         >
-          Error RTK fetch
+          {t('header.actions.error')}
         </button>
         <button className="about-refetch" onClick={handleRetryFetch}>
-          Manual refetch
+          {t('header.actions.refetch')}
         </button>
-        <NextLink href="/about" className="about-button">
-          About page
-        </NextLink>
+        <Link href="/about" className="about-button">
+          {t('header.actions.about')}
+        </Link>
         <ThemeSwitcher />
+        <LangSwitcher />
       </div>
       <br />
       <div className="layout">
@@ -161,31 +179,40 @@ const App = () => {
             loading={isFetching}
             previous={previous}
             next={next}
-            offset={Math.floor(state.offset / 10)}
+            offset={Math.floor(offset / 10)}
             onChangePage={onChangePage}
             handleErrorTest={handleErrorTest}
           />
         </div>
-        <Outlet
-          context={{ pokemonId: state.pokemonId, setPokemonId: setPokemonId }}
-        />
+        {children}
       </div>
       <div className={`footer ${selectedPokemons.length > 0 ? 'active' : ''}`}>
         <button
           className={`footer-button ${theme}`}
           onClick={() => dispatch(setPokemons([]))}
         >
-          Clear selected pokemons
+          {t('footer.pokemon.clear')}
         </button>
-        <p>Pokemon selected: {selectedPokemons.length}</p>
+        <p>
+          {t('footer.pokemon.selected')}
+          {selectedPokemons.length}
+        </p>
         <button
           className={`footer-button ${theme}`}
           onClick={() => handleDownloadCSV()}
         >
-          Download on CSV
+          {t('footer.pokemon.download')}
         </button>
       </div>
     </div>
+  );
+}
+
+const App = ({ children }: AppProps) => {
+  return (
+    <Suspense fallback={null}>
+      <AppContent>{children}</AppContent>
+    </Suspense>
   );
 };
 

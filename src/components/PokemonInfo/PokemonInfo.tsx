@@ -1,11 +1,9 @@
 import './pokemon-info.scss';
-import { useOutletContext } from 'react-router-dom';
 import Spinner from '../Spinner/Spinner';
-import { OutletContext } from '../../types/types';
+import { PokemonInfoProps } from '../../types/types';
 import { useGetPokemonByNameQuery } from '../../api/apiSlice';
 
-const PokemonInfo = () => {
-  const { pokemonId, setPokemonId } = useOutletContext<OutletContext>();
+const PokemonInfo = ({ pokemonId, onClose }: PokemonInfoProps) => {
   const { data, isError, error, isFetching } = useGetPokemonByNameQuery(
     pokemonId || '',
     { skip: !pokemonId }
@@ -56,7 +54,7 @@ const PokemonInfo = () => {
           </div>
         </>
       ) : null}
-      <button className="close-button" onClick={() => setPokemonId(null)}>
+      <button className="close-button" onClick={onClose}>
         Close
       </button>
     </div>

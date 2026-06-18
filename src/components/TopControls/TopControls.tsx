@@ -1,12 +1,14 @@
-import { useState, useEffect, ChangeEvent } from 'react';
-import { TopControlsState, TopControlsProps } from '../../types/types';
+'use client';
 
-import { useContext } from 'react';
+import { useState, useEffect, ChangeEvent, useContext } from 'react';
+import { useTranslations } from 'next-intl';
+import { TopControlsState, TopControlsProps } from '../../types/types';
 import { ThemeContext } from '../../providers/ThemeProvider';
 import { IThemeContext } from '../../types/types';
 import './top-controls.scss';
 
 const TopControls = ({ onSearch, placeholder }: TopControlsProps) => {
+  const t = useTranslations('topControls');
   const { theme } = useContext<IThemeContext>(ThemeContext);
   const [state, setState] = useState<TopControlsState>({
     search: placeholder || '',
@@ -31,12 +33,12 @@ const TopControls = ({ onSearch, placeholder }: TopControlsProps) => {
       <input
         className={`top-controls__input ${theme}`}
         type="text"
-        placeholder="Search for a pokemon"
+        placeholder={t('placeholder')}
         value={state.search}
         onChange={handleSearch}
       />
       <button className={`search-button ${theme}`} onClick={handleSearchClick}>
-        Search
+        {t('button')}
       </button>
     </div>
   );

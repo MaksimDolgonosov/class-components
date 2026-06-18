@@ -4,15 +4,8 @@ export interface TopControlsState {
 
 export interface PokemonState {
   pokemon: string;
-  // loading: boolean;
-  // error: string | null;
-  // next: string | null;
-  // previous: string | null;
-  // data: PokemonDescription[];
   errorTest: boolean;
   limit: number;
-  offset: number;
-  pokemonId: string | null;
 }
 
 export interface TopControlsProps {
@@ -88,9 +81,9 @@ export interface PaginationProps {
   handleErrorTest: () => void;
 }
 
-export interface OutletContext {
+export interface PokemonInfoProps {
   pokemonId: string | null;
-  setPokemonId: (pokemonId: string | null) => void;
+  onClose: () => void;
 }
 
 export interface PokemonInfoResponse {

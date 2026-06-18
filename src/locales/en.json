@@ -1,0 +1,38 @@
+{
+  "app": {
+    "title": "Pokemon finder",
+    "header": {
+      "actions": {
+        "about": "About page",
+        "error": "Error RTK fetch",
+        "refetch": "Manual refetch"
+      }
+    },
+    "footer": {
+      "pokemon": {
+        "selected": "Pokemon selected: ",
+        "clear": "Clear selected pokemons",
+        "download": "Download on CSV"
+      }
+    }
+  },
+  "topControls": {
+    "placeholder": "Search for a pokemon",
+    "button": "Search"
+  },
+  "about": {
+    "meta": {
+      "title": "About | Pokemon finder",
+      "description": "Information about the Pokemon finder app and the author."
+    },
+    "title": "About Page",
+    "intro": "Hello! My name is Maksim Dolgonosov. I'm a student of the RS School React course. Here you can find information about the pokemon finder app.",
+    "github": "My GitHub:",
+    "course": "React course:",
+    "back": "Back to the main page"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "back": "Back to the main page"
+  }
+}
