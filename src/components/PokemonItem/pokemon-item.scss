@@ -6,6 +6,8 @@
   width: 100%;
   cursor: pointer;
   border-bottom: 1px solid $primary-color;
+  text-decoration: none;
+  color: inherit;
 
   &-image {
     width: 50px;

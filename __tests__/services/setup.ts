@@ -35,6 +35,27 @@ vi.mock('next/image', () => ({
   ),
 }));
 
+vi.mock('../../src/i18n/navigation', () => ({
+  Link: ({
+    children,
+    href,
+    ...props
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+  }),
+  usePathname: () => '/',
+}));
+
 beforeEach(() => {
   Object.defineProperty(globalThis, 'localStorage', {
     value: {

@@ -63,7 +63,43 @@
   grid-column: 2;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+
+  span {
+    display: block;
+    &.pagination-disabled {
+      color: #ff6a00;
+      text-align: center;
+      border: 1px solid #ff6a00;
+      border-radius: 5px;
+      justify-content: center;
+      align-items: center;
+      padding: 5px;
+      height: 37px;
+      font-weight: bold;
+      display: flex;
+      cursor: not-allowed;
+      font-size: 16px;
+    }
+  }
+  a {
+    display: block;
+    text-decoration: none;
+    color: #fff;
+    cursor: pointer;
+    background-color: #ff6a00;
+    border: 1px solid #ff6a00;
+    border-radius: 5px;
+    width: 80px;
+    text-align: center;
+    padding: 10px;
+    transition: all 0.3s;
+    display: block;
+    &:hover {
+      background-color: $secondary-color;
+    }
+  }
 }
 
 .error-test-btn {

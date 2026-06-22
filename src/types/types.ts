@@ -25,7 +25,8 @@ export interface ResultsProps {
 
 export interface PokemonListProps {
   data: PokemonDescription[];
-  onPokemonClick: (name: string) => void;
+  page: number;
+  search: string;
 }
 
 export interface PokemonListState {
@@ -63,7 +64,8 @@ export interface PokemonListWithDetails {
 }
 
 export interface PokemonItemProps extends PokemonDescription {
-  onPokemonClick: (name: string) => void;
+  page: number;
+  search: string;
 }
 
 export interface ErrorProps {

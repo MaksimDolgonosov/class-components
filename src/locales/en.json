@@ -25,6 +25,9 @@
     "next": "Next",
     "errorTest": "Error test"
   },
+  "results": {
+    "empty": "No results found"
+  },
   "about": {
     "meta": {
       "title": "About | Pokemon finder",

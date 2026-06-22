@@ -9,7 +9,8 @@ const props: PokemonItemProps = {
   name: 'pikachu',
   description: 'Electric mouse',
   imageUrl: 'pikachu.png',
-  onPokemonClick: vi.fn(),
+  page: 1,
+  search: '',
 };
 
 describe('PokemonItem', () => {

@@ -1,20 +1,33 @@
+'use client';
+
 import Image from 'next/image';
-import { PokemonItemProps } from '../../types/types';
+import { Link } from '../../i18n/navigation';
+import { buildFinderUrl } from '../../lib/finderUrl';
+import { PokemonDescription } from '../../types/types';
 import './pokemon-item.scss';
 import { addPokemon, removePokemon } from '../../store/pokemonSlice';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../store/hooks';
 
+type PokemonItemProps = PokemonDescription & {
+  page: number;
+  search: string;
+};
+
 const PokemonItem = ({
   name,
   description,
   imageUrl,
-  onPokemonClick,
+  page,
+  search,
 }: PokemonItemProps) => {
   const dispatch = useDispatch();
   const { pokemons } = useAppSelector((state) => state.pokemons);
+
   const togglePokemon = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     e.stopPropagation();
+
     if (e.target.checked) {
       dispatch(addPokemon({ name, description, imageUrl }));
     } else {
@@ -23,7 +36,10 @@ const PokemonItem = ({
   };
 
   return (
-    <div className="pokemon-item" onClick={() => onPokemonClick(name)}>
+    <Link
+      href={buildFinderUrl({ page, search, pokemon: name })}
+      className="pokemon-item"
+    >
       <input
         className="pokemon-item-checkbox"
         checked={pokemons.some((pokemon) => pokemon.name === name)}
@@ -41,7 +57,7 @@ const PokemonItem = ({
         <h3>{name}</h3>
         <p>{description}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 
