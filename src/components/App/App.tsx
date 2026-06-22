@@ -15,9 +15,9 @@ import { ThemeContext } from '../../providers/ThemeProvider';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { setPokemons } from '../../store/pokemonSlice';
 import { useGetPokemonsListQuery } from '../../api/apiSlice';
-import { convertToCSV } from '../../utils/convertToCSV';
 import { formatQueryError } from '../helpers/formatQueryError';
 import LangSwitcher from '../LangSwitcher/LangSwitcher';
+import DownloadCsvButton from '../DownloadCsvButton/DownloadCsvButton';
 import './app.scss';
 
 type AppProps = {
@@ -130,17 +130,6 @@ function AppContent({ children }: AppProps) {
     refetch();
   };
 
-  const handleDownloadCSV = () => {
-    const csv = convertToCSV(selectedPokemons);
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `pokemons-${selectedPokemons.length}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <div className={`app ${theme}`}>
       <h1 className="title">{t('title')}</h1>
@@ -197,12 +186,11 @@ function AppContent({ children }: AppProps) {
           {t('footer.pokemon.selected')}
           {selectedPokemons.length}
         </p>
-        <button
-          className={`footer-button ${theme}`}
-          onClick={() => handleDownloadCSV()}
-        >
-          {t('footer.pokemon.download')}
-        </button>
+        <DownloadCsvButton
+          pokemons={selectedPokemons}
+          label={t('footer.pokemon.download')}
+          theme={theme}
+        />
       </div>
     </div>
   );
