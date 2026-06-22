@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import './error.scss';
 import { ErrorProps } from '../../types/types';
 import ErrorPicture from '../../assets/error/PngItem.png';
@@ -7,7 +8,7 @@ const Error = ({ error, comment, onRetry }: ErrorProps) => {
     <div className="error">
       <div className="error-text">{error}</div>
       <div className="error-picture">
-        <img src={ErrorPicture.src} alt="Error" />
+        <Image src={ErrorPicture} alt="Error" width={200} height={200} />
       </div>
       {comment ? <div className="error-comment">{comment}</div> : null}
       {onRetry ? (

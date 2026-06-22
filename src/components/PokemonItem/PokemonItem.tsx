@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { PokemonItemProps } from '../../types/types';
 import './pokemon-item.scss';
 import { addPokemon, removePokemon } from '../../store/pokemonSlice';
@@ -31,13 +32,11 @@ const PokemonItem = ({
         onChange={togglePokemon}
         onClick={(e) => e.stopPropagation()}
       />
-      <div
-        className="pokemon-item-image"
-        style={{
-          backgroundImage: `url(${imageUrl})`,
-          backgroundPosition: 'center',
-        }}
-      ></div>
+      <div className="pokemon-item-image">
+        {imageUrl ? (
+          <Image src={imageUrl} alt={name} width={50} height={50} />
+        ) : null}
+      </div>
       <div className="pokemon-item-descr">
         <h3>{name}</h3>
         <p>{description}</p>

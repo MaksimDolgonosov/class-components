@@ -18,6 +18,23 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+vi.mock('next/image', () => ({
+  default: ({
+    src,
+    alt,
+    ...props
+  }: {
+    src: string | { src: string };
+    alt: string;
+  }) => (
+    <img
+      src={typeof src === 'string' ? src : src.src}
+      alt={alt}
+      {...props}
+    />
+  ),
+}));
+
 beforeEach(() => {
   Object.defineProperty(globalThis, 'localStorage', {
     value: {

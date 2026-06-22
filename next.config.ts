@@ -12,6 +12,16 @@ const nextConfig: NextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || (isProd ? repoBasePath : ''),
   assetPrefix: isProd ? `${repoBasePath}/` : undefined,
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+        pathname: '/PokeAPI/sprites/**',
+      },
+    ],
+  },
 };
 
 export default withNextIntl(nextConfig);

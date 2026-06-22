@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import './pokemon-info.scss';
 import Spinner from '../Spinner/Spinner';
 import { PokemonInfoProps } from '../../types/types';
@@ -29,7 +30,12 @@ const PokemonInfo = ({ pokemonId, onClose }: PokemonInfoProps) => {
           </div>
           <div className="pokemon-info-content">
             <div className="pokemon-info-content-image">
-              <img src={data.imageUrl} alt={data.name} />
+              <Image
+                src={data.imageUrl}
+                alt={data.name}
+                width={96}
+                height={96}
+              />
             </div>
             <div className="pokemon-info-content-info">
               <p className="pokemon-info-content-info-description">

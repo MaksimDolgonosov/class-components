@@ -20,6 +20,11 @@
     "placeholder": "Search for a pokemon",
     "button": "Search"
   },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "errorTest": "Error test"
+  },
   "about": {
     "meta": {
       "title": "About | Pokemon finder",

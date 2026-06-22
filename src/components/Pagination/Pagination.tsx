@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { PaginationProps } from '../../types/types';
 
 const Pagination = ({
@@ -8,6 +9,7 @@ const Pagination = ({
   onChangePage,
   handleErrorTest,
 }: PaginationProps) => {
+  const t = useTranslations('pagination');
   return (
     <>
       {!loading ? (
@@ -17,18 +19,18 @@ const Pagination = ({
               disabled={previous === null}
               onClick={() => onChangePage('previous')}
             >
-              Previous page
+              {t('previous')}
             </button>
             <span className="page-number">{offset + 1}</span>
             <button
               disabled={next === null}
               onClick={() => onChangePage('next')}
             >
-              Next page
+              {t('next')}
             </button>
           </div>
           <button className="error-test-btn" onClick={handleErrorTest}>
-            Error test
+            {t('errorTest')}
           </button>
         </div>
       ) : null}

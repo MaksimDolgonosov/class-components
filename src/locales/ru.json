@@ -20,6 +20,11 @@
     "placeholder": "Поиск покемона",
     "button": "Поиск"
   },
+  "pagination": {
+    "previous": "Назад",
+    "next": "Вперёд",
+    "errorTest": "Тест ошибки"
+  },
   "about": {
     "meta": {
       "title": "О приложении | Поисковик покемонов",

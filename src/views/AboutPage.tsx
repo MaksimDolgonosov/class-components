@@ -1,18 +1,12 @@
-'use client';
-
-import './about-page.scss';
-import { useContext } from 'react';
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { Link } from '../i18n/navigation';
-import { ThemeContext } from '../providers/ThemeProvider';
-import { IThemeContext } from '../types/types';
+import './about-page.scss';
 
-const AboutPage = () => {
-  const t = useTranslations('about');
-  const { theme } = useContext<IThemeContext>(ThemeContext);
+const AboutPage = async () => {
+  const t = await getTranslations('about');
 
   return (
-    <div className={`about-page ${theme}`}>
+    <div className="about-page">
       <h1>{t('title')}</h1>
       <div className="about-page-content">
         <p>{t('intro')}</p>
@@ -37,7 +31,7 @@ const AboutPage = () => {
             RS School React course
           </a>
         </p>
-        <Link href="/" className={`about-page-back-button ${theme}`}>
+        <Link href="/" className="about-page-back-button">
           {t('back')}
         </Link>
       </div>
