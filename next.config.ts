@@ -3,9 +3,8 @@ import createNextIntlPlugin from 'next-intl/plugin';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
-const isProd = process.env.NODE_ENV === 'production';
 const isVercel = Boolean(process.env.VERCEL);
-const isGhPages = isProd && !isVercel;
+const isGhPages = process.env.GITHUB_PAGES === 'true';
 const repoBasePath = '/maksimdolgonosov-REACT2026Q2';
 
 const basePath =
@@ -16,12 +15,11 @@ const assetPrefix =
   (isGhPages ? `${repoBasePath}/` : undefined);
 
 const nextConfig: NextConfig = {
-  ...(isGhPages ? { distDir: './dist' } : {}),
   basePath,
   assetPrefix,
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
   images: {
-    unoptimized: isGhPages,
+    unoptimized: !isVercel,
     remotePatterns: [
       {
         protocol: 'https',
