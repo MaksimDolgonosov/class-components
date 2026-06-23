@@ -16,7 +16,7 @@ const assetPrefix =
   (isGhPages ? `${repoBasePath}/` : undefined);
 
 const nextConfig: NextConfig = {
-  distDir: './dist',
+  ...(isGhPages ? { distDir: './dist' } : {}),
   basePath,
   assetPrefix,
   pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
